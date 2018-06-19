@@ -5,8 +5,6 @@ avatar_url: /assets/images/avatar.jpg
 collections:
   books:
     output: true
-  animes:
-    output: true 
   works: 
     output: true
 markdown: kramdown
