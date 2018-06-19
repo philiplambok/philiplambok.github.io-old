@@ -29,10 +29,16 @@
 
 					<div class="row my-4">
 						<div class="col-md-8 m-auto markdown-body">
-							{{ content }}
+							<div class="row">
+								<div class="col-md-12">
+									{{ content }}
+								</div>
+								<div class="col-md-12 m-0 p-0">
+									{% include comment.html %}
+								</div>
+							</div>
 						</div>
 					</div>
-					{% include comment.html %}
 				</main>
 			</div>
 		</div>
