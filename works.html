@@ -1,0 +1,24 @@
+---
+layout: collections
+---
+
+{% for work in site.works %}
+	<div class="mb-4 border-bottom pb-2">
+		<div class="d-block">
+			<span class="font-weight-bold">Title</span>
+			<span>:</span>
+			<span>{{ work.title }}</span>
+		</div>
+		<div class="d-block">
+			<span class="font-weight-bold">Status</span>
+			<span>:</span>
+			<span>{{ work.status }}</span>
+		</div>
+		<div class="d-block">
+			<span class="font-weight-bold">Homepage</span>
+			<span>:</span>
+			<a href="{{ work.link }}">{{ work.link }}</a>
+		</div>
+		<span class="d-block my-4">{{ work.content }}</span>
+	</div>
+{% endfor  %}

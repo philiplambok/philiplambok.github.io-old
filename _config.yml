@@ -1,0 +1,17 @@
+title: Philip Lambok's Slice of Life
+author: Philip Lambok
+url: https://philiplambok.github.io
+avatar_url: /assets/images/avatar.jpg
+collections:
+  books:
+    output: true
+  animes:
+    output: true 
+  works: 
+    output: true
+markdown: kramdown
+highlighter: rouge
+sass:
+  sass_dir: _scss
+  style: :compressed
+

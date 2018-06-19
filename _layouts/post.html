@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	{% include head.html %}
+	<title>{{ site.title }}</title>
+</head>
+<body>
+	<div id="app">
+		{% include nav.html %}
+
+		<div class="container-fluid">
+			<div class="row">
+				{% include sidebar.html %}
+
+				<main :class="{ 'col-md-10 offset-md-2': navbarActive, 'col-md-12': !navbarActive }">
+					<header class="row d-flex align-items-end overlay" 
+						style="background-image: url('/assets/images/posts/{{ page.image }}'); height: 300px;">
+						<div class="col-md-8 mx-auto text-white py-3 darken-with-text">
+							<h3>{{ page.title }}</h3>
+							<div class="d-flex align-items-center">
+								<img src="{{ site.avatar_url }}" style="height: 40px" class="rounded-circle">
+								<span class="mx-2">{{ site.author }}</span> 
+									&middot; 
+								<span class="mx-2">{{ page.date | date_to_string }}</span>
+							</div>
+						</div>
+					</header>
+
+					<div class="row my-4">
+						<div class="col-md-8 m-auto markdown-body">
+							{{ content }}
+						</div>
+					</div>
+				</main>
+			</div>
+		</div>
+	</div>
+	
+	{% include footer.html %}
+</body>
+</html>

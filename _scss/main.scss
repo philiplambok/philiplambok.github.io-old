@@ -1,0 +1,139 @@
+/* 
+ *  Main 
+*/
+@import "markdown-body";
+
+$cute-color: deeppink;
+$black-color: #333; 
+$light-color: rgba(0,0,0,0.05);
+$ubuntu-mono: 'Roboto Mono', monospace;
+
+.markdown-body {
+	pre, code {
+		font-family: $ubuntu-mono;
+	}
+}
+
+.overlay {
+  position: relative;
+}
+
+.overlay:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: block;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.darken-with-text{
+  position: relative;
+  z-index: 1;
+}
+
+pre{
+	padding: 10px 20px;
+}
+
+.no-link-style{
+	color: $black-color !important;
+
+	&:hover{
+		color: $black-color !important;
+		text-decoration: none; 
+	}
+}
+
+header{
+	height: 450px;
+	background-image: url('/assets/images/bg-welcome.jpg');
+	background-attachment: fixed;
+	background-position: 50% 65%;
+	background-repeat: no-repeat;
+	
+	.header-text{
+		text-align: center;
+		color: white;
+		font-weight: bold;
+		background-color: $black-color;
+		opacity: 0.8;
+		padding: 20px 30px;
+		border-radius: 20px;
+	}
+}
+
+.bg-cute{
+	background-color: $cute-color;
+}
+
+.text-cute{
+	color: $cute-color;
+}
+
+.sidebar {
+	position: fixed;
+	height: 100%;
+	z-index: 1;
+	overflow: auto;
+	
+	img{
+		background-color: deeppink;
+	}
+
+	ul{
+		margin: 0px;
+		padding: 0px;
+		list-style: none;
+	}
+
+	a {
+		color: $black-color;
+		&:hover {
+			text-decoration: none;
+		}
+		li{
+			margin: 0px;
+			padding: 10px 15px;
+			&:hover{
+				background-color: $light-color;
+			}
+		}
+	}
+}
+
+
+footer{
+	font-size: 0.9rem;
+	a {
+		color: $black-color;
+		&:hover {
+			color: $black-color;
+			text-decoration: none;
+			padding-bottom: 1px;
+			border-bottom: 3px solid $cute-color;
+		}
+	}
+}
+
+
+.post-body {
+	h1 {
+		font-size: 2em;
+		padding-bottom: 0.3em;
+		border-bottom: 1px solid #eaecef;
+		line-height: 1.25;
+	}
+
+	h2 {
+		font-size: 1.5em;
+		padding-bottom: 0.3em;
+		border-bottom: 1px solid #eaecef; 
+	}
+
+	h3{
+		font-size: 1.25em;
+	}
+}

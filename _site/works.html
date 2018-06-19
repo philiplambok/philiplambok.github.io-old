@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<!-- bootstrap -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+<link rel="stylesheet" href="/assets/css/sintax.css">
+<link rel="stylesheet" href="/assets/css/style.css">
+
+<!-- font-awesome -->
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+
+<!-- google font -->
+<link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
+
+<!-- vue.js -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+
+	<title>Philip Lambok's Slice of Life</title>
+</head>
+<body>
+	<div id="app">
+		<nav class="container-fluid bg-cute d-flex justify-content-between p-3 fixed-top">
+	<a href="#" class="text-white" @click.prevent="toogleNavbar">
+		<i class="fas fa-bars"></i>
+	</a>
+	<a href="/" class="no-link-style">
+		<span class="text-white font-weight-bold">Philip Lambok's Slice of Life</span>
+	</a>
+</nav>
+
+<div class="my-5"></div>
+
+
+		<div class="container-fluid">
+			<div class="row">
+				<div class="sidebar col-8 col-md-2 bg-light text-dark m-0 p-0" v-show="navbarActive">
+	<div class="p-5">
+		<img src="/assets/images/avatar.jpg" alt="avatar" class="img-fluid rounded-circle p-1">
+	</div>
+	
+	<ul>
+		<a href="/">
+			<li>Home</li>
+		</a>
+		<a href="/2017/06/19/about-me.html">
+			<li>About Me</li>
+		</a>
+		<a href="/books.html">
+			<li>Books</li>
+		</a>
+		<a href="/animes.html">
+			<li>Animes</li>
+		</a>
+		<a href="/works.html">
+			<li>Works</li>
+		</a>
+	</ul>
+</div>
+
+				<main :class="{ 'col-md-10 offset-md-2': navbarActive, 'col-md-12': !navbarActive }">
+
+					<div class="row my-5">
+						<div class="col-md-6 m-auto markdown-body">
+							
+	<div class="mb-4 border-bottom pb-2">
+		<div class="d-block">
+			<span class="font-weight-bold">Title</span>
+			<span>:</span>
+			<span>Akarin CSS Framework</span>
+		</div>
+		<div class="d-block">
+			<span class="font-weight-bold">Status</span>
+			<span>:</span>
+			<span>Drop</span>
+		</div>
+		<div class="d-block">
+			<span class="font-weight-bold">Homepage</span>
+			<span>:</span>
+			<a href="https://github.com/philiplambok/akarin.css">https://github.com/philiplambok/akarin.css</a>
+		</div>
+		<span class="d-block my-4"><p>A Tiny CSS Framework Based on Flexbox</p>
+
+</span>
+	</div>
+
+	<div class="mb-4 border-bottom pb-2">
+		<div class="d-block">
+			<span class="font-weight-bold">Title</span>
+			<span>:</span>
+			<span>Hifumi.js</span>
+		</div>
+		<div class="d-block">
+			<span class="font-weight-bold">Status</span>
+			<span>:</span>
+			<span>Drop</span>
+		</div>
+		<div class="d-block">
+			<span class="font-weight-bold">Homepage</span>
+			<span>:</span>
+			<a href="https://github.com/philiplambok/hifumi.js">https://github.com/philiplambok/hifumi.js</a>
+		</div>
+		<span class="d-block my-4"><p>Tiny Javascript Library for Weaboo</p>
+</span>
+	</div>
+
+	<div class="mb-4 border-bottom pb-2">
+		<div class="d-block">
+			<span class="font-weight-bold">Title</span>
+			<span>:</span>
+			<span>Mikasa.php</span>
+		</div>
+		<div class="d-block">
+			<span class="font-weight-bold">Status</span>
+			<span>:</span>
+			<span>Drop</span>
+		</div>
+		<div class="d-block">
+			<span class="font-weight-bold">Homepage</span>
+			<span>:</span>
+			<a href="https://github.com/philiplambok/mikasa">https://github.com/philiplambok/mikasa</a>
+		</div>
+		<span class="d-block my-4"><p>A Simple Model-View-Controller(MVC) PHP Framework</p>
+</span>
+	</div>
+
+						</div>
+					</div>
+				</main>
+			</div>
+		</div>
+	</div>
+	
+	<footer class="container-fluid text-center py-5 mt-5">
+	<div class="col-md-3 m-auto">
+		<span class="d-block my-2 text-secondary">Philip Lambok's Slice of Life &copy; 2018</span>
+		<div class="d-flex justify-content-around">
+			<a href="/2017/06/19/about-me.html">about me</a>
+			<a href="/books.html">books</a>
+			<a href="/animes.html">animes</a>
+			<a href="/works.html">works</a>
+		</div>
+	</div>
+</footer>
+
+<script src="/assets/js/script.js"></script>
+
+</body>
+</html>

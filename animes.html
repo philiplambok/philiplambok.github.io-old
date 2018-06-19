@@ -1,0 +1,28 @@
+---
+layout: collections
+---
+{% for anime in site.animes %}
+	<div class="d-flex justify-content-between align-items-start border-bottom pb-2 pb-md-4 mb-4">
+		<div>
+			<div class="d-block">
+				<span class="font-weight-bold">Title :</span>
+				<span>{{ anime.title }}</span>
+			</div>
+			<div class="d-block">
+				<span class="font-weight-bold">Status</span>
+				<span> : </span>
+				<span>{{ anime.status }}</span>
+			</div>
+			<div class="d-block">
+				<span class="font-weight-bold">Ratting</span>
+				<span> : </span>
+				<span>{{ anime.ratting }}</span>
+			</div>
+
+			<span class="d-block my-4">{{ anime.content }}</span>
+		</div>
+		<div class="d-none d-md-block">
+			<img src="/assets/images/animes/{{ anime.image }}" alt="" style="width: 200px">
+		</div>
+	</div>
+{% endfor %}

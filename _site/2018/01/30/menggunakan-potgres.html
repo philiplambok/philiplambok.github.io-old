@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<!-- bootstrap -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+<link rel="stylesheet" href="/assets/css/sintax.css">
+<link rel="stylesheet" href="/assets/css/style.css">
+
+<!-- font-awesome -->
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+
+<!-- google font -->
+<link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
+
+<!-- vue.js -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+
+	<title>Philip Lambok's Slice of Life</title>
+</head>
+<body>
+	<div id="app">
+		<nav class="container-fluid bg-cute d-flex justify-content-between p-3 fixed-top">
+	<a href="#" class="text-white" @click.prevent="toogleNavbar">
+		<i class="fas fa-bars"></i>
+	</a>
+	<a href="/" class="no-link-style">
+		<span class="text-white font-weight-bold">Philip Lambok's Slice of Life</span>
+	</a>
+</nav>
+
+<div class="my-5"></div>
+
+
+		<div class="container-fluid">
+			<div class="row">
+				<div class="sidebar col-8 col-md-2 bg-light text-dark m-0 p-0" v-show="navbarActive">
+	<div class="p-5">
+		<img src="/assets/images/avatar.jpg" alt="avatar" class="img-fluid rounded-circle p-1">
+	</div>
+	
+	<ul>
+		<a href="/">
+			<li>Home</li>
+		</a>
+		<a href="/2017/06/19/about-me.html">
+			<li>About Me</li>
+		</a>
+		<a href="/books.html">
+			<li>Books</li>
+		</a>
+		<a href="/animes.html">
+			<li>Animes</li>
+		</a>
+		<a href="/works.html">
+			<li>Works</li>
+		</a>
+	</ul>
+</div>
+
+				<main :class="{ 'col-md-10 offset-md-2': navbarActive, 'col-md-12': !navbarActive }">
+					<header class="row d-flex align-items-end overlay" 
+						style="background-image: url('/assets/images/posts/postgres.jpg'); height: 300px;">
+						<div class="col-md-8 mx-auto text-white py-3 darken-with-text">
+							<h3>Menggunakan PostgreSQL di Rails 5</h3>
+							<div class="d-flex align-items-center">
+								<img src="/assets/images/avatar.jpg" style="height: 40px" class="rounded-circle">
+								<span class="mx-2">Philip Lambok</span> 
+									&middot; 
+								<span class="mx-2">30 Jan 2018</span>
+							</div>
+						</div>
+					</header>
+
+					<div class="row my-4">
+						<div class="col-md-8 m-auto markdown-body">
+							<p>Web development dengan ruby on rails biasanya memakai postgres untuk databasenya pada produksi dibandingkan sqlite(default).</p>
+
+<p>Tulisan ini akan membahas instalasi dan koneksinya ke rails. Rails membolehkan penggunaan perangkat lunak database yang berbeda di lingkungan berbeda, dimana rails mempunyai tiga lingkungan, development, test dan produksi.</p>
+
+<p>Sebelumnya anda mungkin menggunakan database sqlite di development dan test, namun dalam produksi menggunakan postgres. Hal tersebut sangat tidak disarankan, karena memungkinkan ketika dalam pembuatan fitur, bekerja pada development namun tidak bekerja saat produksi.</p>
+
+<h2 id="instalasi-postgresql">Instalasi PostgreSQL</h2>
+<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$&gt; </span>sudo apt-get update
+<span class="gp">$&gt; </span>sudo apt-get install postgresql postgresql-contrib
+<span class="gp">$&gt; </span>psql --version
+psql <span class="o">(</span>PostgreSQL<span class="o">)</span> 9.5.10
+</code></pre>
+</div>
+
+<p>Instalasi diatas adalah untuk linux, jika os lain dapat dilihat disini.</p>
+
+<p>Setelah instalasi telah berhasil, langkah selanjutnya adalah membuat role, atau koneksi pada postgresql.</p>
+
+<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="c"># akses menggunakan super user</span>
+<span class="gp">$&gt; </span>sudo su -
+
+<span class="c"># masuk ke akun postgres</span>
+root@pc: ~#&gt; sudo -i -u postgres
+
+<span class="c"># jalankan buat user baru</span>
+postgres@pc: ~#&gt; createuser pquest -s
+
+<span class="c"># membuat database yang sama</span>
+postgres@pc: ~#&gt; psql
+psql &gt; create database pquest;
+CREATE DATABASE
+</code></pre>
+</div>
+
+<p>Maka anda telah berhasil membuat akun role dengan nama pquest.
+Option <code class="highlighter-rouge">-s</code> untuk super role.</p>
+
+<h2 id="pembuatan-projek-rails">Pembuatan Projek Rails</h2>
+
+<p>Sekarang waktunya melakukan koneksi ke project railsnya.</p>
+
+<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$&gt; </span>rails new postgres-test -d postgresql
+</code></pre>
+</div>
+
+<p>Pada file config/database.yml silahkan uncoment untuk usernya.</p>
+
+<div class="language-yml highlighter-rouge"><pre class="highlight"><code><span class="c1"># config/database.yml</span>
+<span class="c1"># ...</span>
+<span class="s">develepment</span><span class="pi">:</span>
+  <span class="s">&lt;&lt;</span><span class="pi">:</span> <span class="nv">*default</span>
+  <span class="s">database</span><span class="pi">:</span> <span class="s">postgres-test-development</span>
+</code></pre>
+</div>
+
+<p>Buat scaffold untuk coba-coba.</p>
+
+<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$&gt; </span>rails g scaffold anime name
+<span class="gp">$&gt; </span>rails db:migrate
+</code></pre>
+</div>
+
+<p>Silahkan lihat hasil di url : <a href="http://localhost:4000/animes">http://localhost:4000/animes</a></p>
+
+<hr />
+
+<p>Jika ingin lebih lanjut silahkan baca buku <a href="https://momjian.us/main/writings/pgsql/aw_pgsql_book/">ini</a>, atau dokumentasi postgresql-nya.</p>
+
+<p>Terima kasih, anda telah menyelesaikan tulisan instalasi dan koneksi pemakaian postgresql di rails. Semoga dapat membantu.</p>
+
+
+						</div>
+					</div>
+				</main>
+			</div>
+		</div>
+	</div>
+	
+	<footer class="container-fluid text-center py-5 mt-5">
+	<div class="col-md-3 m-auto">
+		<span class="d-block my-2 text-secondary">Philip Lambok's Slice of Life &copy; 2018</span>
+		<div class="d-flex justify-content-around">
+			<a href="/2017/06/19/about-me.html">about me</a>
+			<a href="/books.html">books</a>
+			<a href="/animes.html">animes</a>
+			<a href="/works.html">works</a>
+		</div>
+	</div>
+</footer>
+
+<script src="/assets/js/script.js"></script>
+
+</body>
+</html>

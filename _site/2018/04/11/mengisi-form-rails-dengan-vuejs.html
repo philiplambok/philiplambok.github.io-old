@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<!-- bootstrap -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+<link rel="stylesheet" href="/assets/css/sintax.css">
+<link rel="stylesheet" href="/assets/css/style.css">
+
+<!-- font-awesome -->
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+
+<!-- google font -->
+<link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
+
+<!-- vue.js -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+
+	<title>Philip Lambok's Slice of Life</title>
+</head>
+<body>
+	<div id="app">
+		<nav class="container-fluid bg-cute d-flex justify-content-between p-3 fixed-top">
+	<a href="#" class="text-white" @click.prevent="toogleNavbar">
+		<i class="fas fa-bars"></i>
+	</a>
+	<a href="/" class="no-link-style">
+		<span class="text-white font-weight-bold">Philip Lambok's Slice of Life</span>
+	</a>
+</nav>
+
+<div class="my-5"></div>
+
+
+		<div class="container-fluid">
+			<div class="row">
+				<div class="sidebar col-8 col-md-2 bg-light text-dark m-0 p-0" v-show="navbarActive">
+	<div class="p-5">
+		<img src="/assets/images/avatar.jpg" alt="avatar" class="img-fluid rounded-circle p-1">
+	</div>
+	
+	<ul>
+		<a href="/">
+			<li>Home</li>
+		</a>
+		<a href="/2017/06/19/about-me.html">
+			<li>About Me</li>
+		</a>
+		<a href="/books.html">
+			<li>Books</li>
+		</a>
+		<a href="/animes.html">
+			<li>Animes</li>
+		</a>
+		<a href="/works.html">
+			<li>Works</li>
+		</a>
+	</ul>
+</div>
+
+				<main :class="{ 'col-md-10 offset-md-2': navbarActive, 'col-md-12': !navbarActive }">
+					<header class="row d-flex align-items-end overlay" 
+						style="background-image: url('/assets/images/posts/p-chan.png'); height: 300px;">
+						<div class="col-md-8 mx-auto text-white py-3 darken-with-text">
+							<h3>Mengisi Form Rails dengan Vue</h3>
+							<div class="d-flex align-items-center">
+								<img src="/assets/images/avatar.jpg" style="height: 40px" class="rounded-circle">
+								<span class="mx-2">Philip Lambok</span> 
+									&middot; 
+								<span class="mx-2">11 Apr 2018</span>
+							</div>
+						</div>
+					</header>
+
+					<div class="row my-4">
+						<div class="col-md-8 m-auto markdown-body">
+							<p>Perpaduan Karen dengan P-chan sama dengan perpaduan Rails dan Vue, hehehe..</p>
+
+<p>Tulisan ini akan membahas menggunakan vue js dalam input lewat from di rails. Tulisan ini akan menggunakan vue js dan es6 dalam pengkodeannya. Untuk instalasi silahkan liat dokumentasinya masing-masing atau lewat tulisan sebelumnya.</p>
+
+<p>Seperti sebelumnya, dalam pembahasan kita sambil membuat sebuah projek agar pembahasan bisa lebih mendekati realita. Kita akan membuat projek untuk input anime baru dan menampilkannya.</p>
+
+<p>Silahkan buat project dan install paket <code class="highlighter-rouge">vuejs-rails</code>, serta hapus gem <code class="highlighter-rouge">coffee-script</code> karena kita akan menggunakan es6.</p>
+
+<h1 id="membuat-model">Membuat Model</h1>
+<p>Mari kita mulai dengan pembuatan model terlebih dahulu.</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$&gt; </span>rails g model anime name
+</code></pre>
+</div>
+
+<p>Atributnya cukup nama saja.</p>
+
+<h2 id="membuat-controller">Membuat Controller</h2>
+<p>Sekarang mari buat controllernya.</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$&gt; </span>rails g controller animes new
+</code></pre>
+</div>
+
+<p>Lalu setting ruotenya,</p>
+
+<div class="language-rb highlighter-rouge"><pre class="highlight"><code><span class="no">Rails</span><span class="p">.</span><span class="nf">application</span><span class="p">.</span><span class="nf">routes</span><span class="p">.</span><span class="nf">draw</span> <span class="k">do</span>
+  <span class="n">root</span> <span class="s1">'animes#new'</span>
+  <span class="n">resources</span> <span class="ss">:animes</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<h2 id="edit-applicationhtmlerb">Edit application.html.erb</h2>
+<p>Lalu kita edit layoutnya, sesuai dengan konfigurasi di Vue.</p>
+
+<div class="language-html highlighter-rouge"><pre class="highlight"><code><span class="err">&lt;</span>%= yield :template %&gt;
+
+<span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"app"</span><span class="nt">&gt;</span>
+  <span class="err">&lt;</span>%= yield %&gt;
+<span class="nt">&lt;/div&gt;</span>
+</code></pre>
+</div>
+
+<p>Saya juga membuat file template terpisah dengan layout agar kode lebih bersih. Penulisan ini sempat disinggung pada tulisan sebelumnya.</p>
+
+<p>Sekerang tinggal membuat helper untuk rendernya.</p>
+
+<div class="language-rb highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="nf">render_template</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+  <span class="n">content_for</span> <span class="ss">:template</span> <span class="k">do</span>
+    <span class="n">render</span> <span class="s2">"templates/</span><span class="si">#{</span><span class="n">params</span><span class="si">}</span><span class="s2">"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<h2 id="edit-file-viewnya">Edit file viewnya</h2>
+<p>Sekarang kita mengedit file view untuk inputnya. Dalam kasus ini saya ingin sekaligus memperkenalkan konsep <em>nested component</em>, jadi saya hanya menulis tag <code class="highlighter-rouge">&lt;anime&gt;</code> saja pada viewnya, namun pada realitas kembali lagi pada rancangannya masing-masing.</p>
+
+<div class="language-html highlighter-rouge"><pre class="highlight"><code><span class="err">&lt;</span>% render_template "animes" %&gt;
+
+<span class="nt">&lt;h2&gt;</span>Animes Project<span class="nt">&lt;/h2&gt;</span>
+
+<span class="nt">&lt;animes&gt;&lt;/animes&gt;</span>
+</code></pre>
+</div>
+
+<h2 id="membuat-template-untuk-komponentnya">Membuat template untuk komponentnya</h2>
+<p>Sekarang kita membuat template untuk komponennya, saya membuatnya menjadi satu file saja.</p>
+
+<p>Pada file <code class="highlighter-rouge">views/templates/_animes.html.erb</code></p>
+
+<div class="language-html highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;template</span> <span class="na">id=</span><span class="s">"add-new-anime-template"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;div&gt;</span>
+    <span class="err">&lt;</span>%= form_with model: @anime, url: animes_path, method: :post do |f| %&gt;
+      <span class="err">&lt;</span>%= f.text_field :name, "v-model": "anime.name" %&gt;
+      <span class="err">&lt;</span>%= f.submit "New anime", "@click.prevent": "addNewAnime()" %&gt;
+    <span class="err">&lt;</span>% end %&gt;
+  <span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/template&gt;</span>
+
+<span class="nt">&lt;template</span> <span class="na">id=</span><span class="s">"animes-template"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;div&gt;</span>
+    <span class="nt">&lt;add-new-anime</span> <span class="na">:animes=</span><span class="s">"animes"</span><span class="nt">&gt;&lt;/add-new-anime&gt;</span>
+    <span class="nt">&lt;button</span> <span class="err">@</span><span class="na">click=</span><span class="s">"loadAnimes"</span><span class="nt">&gt;</span>Refesh<span class="nt">&lt;/button&gt;</span>
+    <span class="nt">&lt;li</span> <span class="na">v-for=</span><span class="s">"anime in animes"</span><span class="nt">&gt;</span>
+      
+    <span class="nt">&lt;/li&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/template&gt;</span>
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">animes-template</code> adalah parent komponennya, didalamnya adalah <code class="highlighter-rouge">add-new-anime-template</code>.</p>
+
+<p>Sebelum lanjut jauh lagi, mari kita setting file <code class="highlighter-rouge">application.js</code>-nya terlebih dahulu.</p>
+
+<div class="language-js highlighter-rouge"><pre class="highlight"><code><span class="c1">// ...</span>
+<span class="c1">//= require vue</span>
+<span class="c1">//= require vue-resource</span>
+<span class="c1">//= require_tree .</span>
+
+<span class="c1">// global bus for communication</span>
+<span class="nx">bus</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">()</span>
+
+
+<span class="nb">window</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">'load'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
+  <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+    <span class="na">el</span><span class="p">:</span> <span class="s2">"#app"</span><span class="p">,</span>
+  <span class="p">})</span>
+<span class="p">})</span>
+</code></pre>
+</div>
+
+<p>Karena kita menggunakan konsep <code class="highlighter-rouge">nested-component</code> maka kita perlu variable yang akan menjadi komunikasi antar element <em>parent</em> dengan <em>child</em> karena vue js tidak menyediakan sinkronisasi secara dua arah pada konsep tersebut.</p>
+
+<h2 id="edit-animesjs">Edit animes.js</h2>
+<p>Sekarang waktunya untuk mengkodekan file js pada komponennya.</p>
+
+<div class="language-js highlighter-rouge"><pre class="highlight"><code><span class="c1">// Place all the behaviors and hooks related to the matching controller here.</span>
+<span class="c1">// All this logic will automatically be available in application.js.</span>
+
+<span class="nx">Vue</span><span class="p">.</span><span class="nx">component</span><span class="p">(</span><span class="s1">'animes'</span><span class="p">,</span> <span class="p">{</span>
+  <span class="na">template</span><span class="p">:</span> <span class="s1">'#animes-template'</span><span class="p">,</span>
+  <span class="nx">data</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">{</span>
+      <span class="na">animes</span><span class="p">:</span> <span class="kc">null</span>
+    <span class="p">}</span>
+  <span class="p">},</span>
+  <span class="na">methods</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nx">loadAnimes</span><span class="p">(){</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">$http</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">"/animes.json"</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">response</span><span class="p">){</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">animes</span> <span class="o">=</span> <span class="nx">response</span><span class="p">.</span><span class="nx">body</span>
+      <span class="p">})</span>
+    <span class="p">}</span>
+  <span class="p">},</span>
+  <span class="nx">mounted</span><span class="p">(){</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">loadAnimes</span><span class="p">()</span>
+  <span class="p">},</span>
+  <span class="nx">created</span><span class="p">(){</span>
+    <span class="nx">bus</span><span class="p">.</span><span class="nx">$on</span><span class="p">(</span><span class="s1">'added'</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">loadAnimes</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">})</span>
+
+
+<span class="nx">Vue</span><span class="p">.</span><span class="nx">component</span><span class="p">(</span><span class="s2">"add-new-anime"</span><span class="p">,</span> <span class="p">{</span>
+  <span class="na">template</span><span class="p">:</span> <span class="s2">"#add-new-anime-template"</span><span class="p">,</span>
+  <span class="nx">data</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">{</span>
+      <span class="na">anime</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">name</span><span class="p">:</span> <span class="s2">""</span><span class="p">,</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">},</span>
+  <span class="na">methods</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nx">addNewAnime</span><span class="p">(){</span>
+      <span class="nx">body</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="na">anime</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">anime</span>
+      <span class="p">}</span>
+
+      <span class="nx">headers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"X-CSRF-Token"</span><span class="p">:</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s2">"meta[name='csrf-token']"</span><span class="p">).</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s2">"content"</span><span class="p">)</span>
+      <span class="p">}</span>
+
+      <span class="k">this</span><span class="p">.</span><span class="nx">$http</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s1">'/animes'</span><span class="p">,</span> <span class="nx">body</span><span class="p">,</span> <span class="p">{</span> <span class="na">headers</span><span class="p">:</span> <span class="nx">headers</span><span class="p">})</span>
+        <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">response</span><span class="p">){</span>
+          <span class="nx">bus</span><span class="p">.</span><span class="nx">$emit</span><span class="p">(</span><span class="s1">'added'</span><span class="p">)</span>
+          <span class="k">this</span><span class="p">.</span><span class="nx">anime</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s2">""</span>
+        <span class="p">})</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">})</span>
+</code></pre>
+</div>
+
+<p>Saya menggunakan <code class="highlighter-rouge">vue-resources</code> untuk ajaxnya. Banyak versi yang boleh dipakai, seperti axios, maupun native. Dalam request-nya saya menggikutkan headers <code class="highlighter-rouge">X-CSRF-Token</code>, karena secara default rails mempunyai keamanan untuk deteksi bot masuk dan menggunakan aplikasi web.</p>
+
+<p>Jika anda sebelumnya sudah pernah menggunakan mengkodekan vuejs pada input melalui form dan men-disablekan <code class="highlighter-rouge">CSRF-Token</code> sebaiknya anda mengaktifkan kembali karena sangat berguna untuk keamanan website anda.</p>
+
+<p>Catatan: saya menggunakan variable <code class="highlighter-rouge">bus</code> tadi untuk komunikasi antara <code class="highlighter-rouge">parent</code> dan <code class="highlighter-rouge">child</code> komponennya. <code class="highlighter-rouge">bus.$emit('event')</code> untuk membangkitkan event, sedangkan <code class="highlighter-rouge">bus.$on('event')</code> untuk listen.</p>
+
+<p>Terakhir kode controllernya: <code class="highlighter-rouge">animes_controller.rb</code></p>
+<div class="language-rb highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">AnimesController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+  <span class="k">def</span> <span class="nf">index</span>
+    <span class="vi">@animes</span> <span class="o">=</span> <span class="no">Anime</span><span class="p">.</span><span class="nf">all</span>
+
+    <span class="n">respond_to</span> <span class="k">do</span> <span class="o">|</span><span class="nb">format</span><span class="o">|</span>
+      <span class="nb">format</span><span class="p">.</span><span class="nf">json</span> <span class="p">{</span> <span class="n">render</span> <span class="ss">json: </span><span class="vi">@animes</span> <span class="p">}</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">new</span>
+    <span class="vi">@anime</span> <span class="o">=</span> <span class="no">Anime</span><span class="p">.</span><span class="nf">new</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">create</span>
+    <span class="vi">@anime</span> <span class="o">=</span> <span class="no">Anime</span><span class="p">.</span><span class="nf">new</span> <span class="n">anime_params</span>
+
+    <span class="vi">@anime</span><span class="p">.</span><span class="nf">save</span>
+
+    <span class="n">render</span> <span class="ss">json: </span><span class="vi">@anime</span>
+  <span class="k">end</span>
+
+  <span class="kp">private</span>
+  <span class="k">def</span> <span class="nf">anime_params</span>
+    <span class="n">params</span><span class="p">.</span><span class="nf">require</span><span class="p">(</span><span class="ss">:anime</span><span class="p">).</span><span class="nf">permit</span><span class="p">(</span><span class="ss">:name</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>Silahkan serve <code class="highlighter-rouge">rails s</code> dan buka browser anda ke <code class="highlighter-rouge">/localhost:3000</code>, maka project sudah bisa dinikmati.</p>
+
+<hr />
+<p>Terima kasih anda baru saja menyelesaikan tulisan tentang input form di rails menggunakan Vue.js. Semoga tulisan ini dapat membantu dan bermamfaat bagi pembaca skalian.</p>
+
+						</div>
+					</div>
+				</main>
+			</div>
+		</div>
+	</div>
+	
+	<footer class="container-fluid text-center py-5 mt-5">
+	<div class="col-md-3 m-auto">
+		<span class="d-block my-2 text-secondary">Philip Lambok's Slice of Life &copy; 2018</span>
+		<div class="d-flex justify-content-around">
+			<a href="/2017/06/19/about-me.html">about me</a>
+			<a href="/books.html">books</a>
+			<a href="/animes.html">animes</a>
+			<a href="/works.html">works</a>
+		</div>
+	</div>
+</footer>
+
+<script src="/assets/js/script.js"></script>
+
+</body>
+</html>
