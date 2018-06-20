@@ -1,7 +1,7 @@
 ---
 title: JS Uncover
 author: Andre Pratama 
-ratting: 7 / 10
+rating: 7 / 10
 date: 08-05-2017
 image: js-uncover.jpg
 ---

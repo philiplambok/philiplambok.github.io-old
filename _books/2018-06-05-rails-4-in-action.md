@@ -1,7 +1,7 @@
 ---
 title: Rails 4 in Action
 author: Ryan Bigg, dkk
-ratting: 8 / 10
+rating: 8 / 10
 date: 05-06-2018
 image: rails4-action.png
 ---

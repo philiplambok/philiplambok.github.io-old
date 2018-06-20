@@ -1,7 +1,7 @@
 ---
 title: PHP Uncover
 author: Andre Pratama 
-ratting: 8 / 10
+rating: 8 / 10
 date: 07-05-2017
 image: php-uncover.jpg
 ---

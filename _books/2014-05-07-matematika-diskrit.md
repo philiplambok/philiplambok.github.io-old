@@ -1,7 +1,7 @@
 ---
 title: Matematika Diskrit
 author: Rinaldi Munir
-ratting: 8 / 10
+rating: 8 / 10
 date: 06-05-2014
 image: diskrit-munir.jpg
 ---

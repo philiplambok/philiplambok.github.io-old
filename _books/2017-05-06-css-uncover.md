@@ -1,7 +1,7 @@
 ---
 title: CSS Uncover
 author: Andre Pratama 
-ratting: 8 / 10
+rating: 8 / 10
 date: 06-05-2017
 image: css-uncover.jpg
 ---

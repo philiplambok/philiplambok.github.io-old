@@ -1,7 +1,7 @@
 ---
 title: Everyday Rails Testing with RSpec
 author: Aaron Sumner
-ratting: 6 / 10
+rating: 6 / 10
 date: 19-06-2018
 image: everyday-rspec.jpeg
 ---

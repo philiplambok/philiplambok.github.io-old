@@ -1,7 +1,7 @@
 ---
 title: HTML Uncover
 author: Andre Pratama 
-ratting: 8 / 10
+rating: 8 / 10
 date: 05-05-2017
 image: html-uncover.jpg
 ---

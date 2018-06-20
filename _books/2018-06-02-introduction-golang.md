@@ -1,7 +1,7 @@
 ---
 title: Introduction Go. Build Reliable, Scalable Programs  
 author: Caleb Doxsey
-ratting: 7 / 10
+rating: 7 / 10
 date: 02-06-2018
 image: golang-intro.jpg
 ---

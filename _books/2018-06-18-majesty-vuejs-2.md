@@ -1,8 +1,8 @@
 ---
 title: Majesty Vue JS 2
 author: Alex Kyriakidis, Kostas Maniatis
-ratting: 8 / 10
-date: 19-06-2018
+rating: 8 / 10
+date: 18-06-2018
 image: majesty-vuejs2.jpg
 ---
 

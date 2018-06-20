@@ -1,7 +1,7 @@
 ---
 title: Ruby on Rails Tutorial - Learn Web Development with Rails (2nd Edition)
 author: Michael Hartl
-ratting: 9 / 10
+rating: 9 / 10
 date: 04-06-2018
 image: tutorial-rails.jpg
 ---

@@ -1,7 +1,7 @@
 ---
 title: Pemrograman C++
 author: Budi Rahardjo
-ratting: 8 / 10
+rating: 8 / 10
 date: 05-06-2014
 image: budi-cplusplus.jpg
 ---

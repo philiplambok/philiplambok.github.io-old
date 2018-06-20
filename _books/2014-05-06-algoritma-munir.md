@@ -1,7 +1,7 @@
 ---
 title: Algoritma dan Pemrograman dalam bahasa Pascal, C, C++
 author: Rinaldi Munir
-ratting: 9 / 10
+rating: 9 / 10
 date: 05-05-2014
 image: algoritma-munir.jpg
 ---

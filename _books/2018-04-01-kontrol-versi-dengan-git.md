@@ -1,7 +1,7 @@
 ---
 title: Kontrol Versi dengan Git
 author: Alex Xandra Albert Sim 
-ratting: 7 / 10
+rating: 7 / 10
 date: 01-04-2018
 image: git-alex.png
 ---

@@ -1,7 +1,7 @@
 ---
 title: Go Web Programming  
 author: Sau Sheong Chang
-ratting: 8 / 10
+rating: 8 / 10
 date: 03-06-2018
 image: go-web.png
 ---
