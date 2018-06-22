@@ -2,7 +2,7 @@
 title: Programming Ruby 1.9 & 2.0 (4 Ed)
 author: Dave Thomas, Chad Fowler, Andy Hunt 
 rating: 8 / 10 
-date: 22-05-2018
+date: 22-06-2018
 image: ruby4.jpg
 ---
 
