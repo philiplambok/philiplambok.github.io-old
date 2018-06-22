@@ -17,7 +17,7 @@
 <!-- vue.js -->
 <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
 
-	<title> Collections &middot; Philip Lambok's Slice of Life</title>
+	<title>Philip Lambok's Slice of Life</title>
 </head>
 <body>
 	<div id="app">
@@ -57,73 +57,78 @@
 </div>
 
 				<main :class="{ 'col-md-10 offset-md-2': navbarActive, 'col-md-12': !navbarActive }">
+					<header class="row">
+	<div class="col-md-4 m-auto header-content">
+		<div class="p-2 m-0 w-50 m-auto">
+			<img src="/assets/images/avatar.jpg" class="img-fluid p-1 rounded-circle bg-white">
+		</div>
 
-					<div class="row my-5">
-						<div class="col-md-6 m-auto markdown-body">
-							
-	<div class="mb-4 border-bottom pb-2">
-		<div class="d-block">
-			<span class="font-weight-bold">Title</span>
-			<span>:</span>
-			<span>Akarin CSS Framework</span>
-		</div>
-		<div class="d-block">
-			<span class="font-weight-bold">Status</span>
-			<span>:</span>
-			<span>Drop</span>
-		</div>
-		<div class="d-block">
-			<span class="font-weight-bold">Homepage</span>
-			<span>:</span>
-			<a href="https://github.com/philiplambok/akarin.css">https://github.com/philiplambok/akarin.css</a>
-		</div>
-		<span class="d-block my-4"><p>A Tiny CSS Framework Based on Flexbox</p>
-
-</span>
+		<div class="header-text my-4">I Love Programming and Japan Stuff</div>
 	</div>
+</header>
 
-	<div class="mb-4 border-bottom pb-2">
-		<div class="d-block">
-			<span class="font-weight-bold">Title</span>
-			<span>:</span>
-			<span>Hifumi.js</span>
-		</div>
-		<div class="d-block">
-			<span class="font-weight-bold">Status</span>
-			<span>:</span>
-			<span>Drop</span>
-		</div>
-		<div class="d-block">
-			<span class="font-weight-bold">Homepage</span>
-			<span>:</span>
-			<a href="https://github.com/philiplambok/hifumi.js">https://github.com/philiplambok/hifumi.js</a>
-		</div>
-		<span class="d-block my-4"><p>Tiny Javascript Library for Weaboo</p>
-</span>
-	</div>
+<div class="row">
+	<div class="col-md-8 m-auto">
+		<div class="row">
+			<div class="col-md-12">
+				
+					<div class="my-5">
+						<a href="/2018/01/30/menggunakan-potgres.html" class="no-link-style">
+							<h3>Menggunakan PostgreSQL di Rails 5</h3>
+						</a>
+						<p><p>Web development dengan ruby on rails biasanya memakai postgres untuk databasenya pada produksi dibandingkan sqlite(default).</p>
 
-	<div class="mb-4 border-bottom pb-2">
-		<div class="d-block">
-			<span class="font-weight-bold">Title</span>
-			<span>:</span>
-			<span>Mikasa.php</span>
-		</div>
-		<div class="d-block">
-			<span class="font-weight-bold">Status</span>
-			<span>:</span>
-			<span>Drop</span>
-		</div>
-		<div class="d-block">
-			<span class="font-weight-bold">Homepage</span>
-			<span>:</span>
-			<a href="https://github.com/philiplambok/mikasa">https://github.com/philiplambok/mikasa</a>
-		</div>
-		<span class="d-block my-4"><p>A Simple Model-View-Controller(MVC) PHP Framework</p>
-</span>
-	</div>
-
+</p>
+						<div class="d-flex align-items-center">
+							<img src="/assets/images/avatar.jpg" style="height: 24px" class="rounded-circle mr-2">
+							<span class="text-secondary">Philip Lambok</span>
 						</div>
 					</div>
+				
+					<div class="my-5">
+						<a href="/2018/01/29/pengenalan-tdd.html" class="no-link-style">
+							<h3>Pengenalan TDD dengan RSpec dan Capybara</h3>
+						</a>
+						<p><p>Membuat project dengan metodologi testing memang akan melambat pekerjaan, karena kita harus menulis kode testingnya dulu, tapi akan menjamin kode dimana depan, sedangkan tanpa testing kita akan menulis kode/fitur dengan cepat namun dimasa depan akan mememukan banyak masalah.</p>
+
+</p>
+						<div class="d-flex align-items-center">
+							<img src="/assets/images/avatar.jpg" style="height: 24px" class="rounded-circle mr-2">
+							<span class="text-secondary">Philip Lambok</span>
+						</div>
+					</div>
+				
+			</div>
+			<div class="col-md-12">
+				<div class="row d-flex align-items-center">
+					<div class="col-12 col-md-4 my-2">
+						
+						    <a href="/page2/" class="btn btn-outline-secondary btn-block">
+						    	<i class="fas fa-angle-left"></i>
+						    	Halaman Selanjutnya
+						    </a>
+					  
+					</div>
+
+					<div class="col-md-4 d-none d-md-block text-center">
+						<span class="text-secondary">Page 3 of 4</span>
+					</div>
+
+					<div class="col-12 col-md-4 my-2">
+						
+					  	<a href="/page4/" class="btn btn-outline-secondary btn-block">
+					  		Halaman Sebelumnya
+								<i class="fas fa-angle-right"></i>
+						  </a>
+					   
+					</div>
+				</div>
+			</div>
+			</div>
+		</div>
+	</div>
+</div>
+
 				</main>
 			</div>
 		</div>

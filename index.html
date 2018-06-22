@@ -14,17 +14,47 @@ layout: default
 
 <div class="row">
 	<div class="col-md-8 m-auto">
-		{% for post in site.posts %}
-			<div class="my-5">
-				<a href="{{ post.url }}" class="no-link-style">
-					<h3>{{ post.title }}</h3>
-				</a>
-				<p>{{ post.excerpt }}</p>
-				<div class="d-flex align-items-center">
-					<img src="{{ site.avatar_url }}" style="height: 24px" class="rounded-circle mr-2">
-					<span class="text-secondary">{{ site.author }}</span>
+		<div class="row">
+			<div class="col-md-12">
+				{% for post in paginator.posts %}
+					<div class="my-5">
+						<a href="{{ post.url }}" class="no-link-style">
+							<h3>{{ post.title }}</h3>
+						</a>
+						<p>{{ post.excerpt }}</p>
+						<div class="d-flex align-items-center">
+							<img src="{{ site.avatar_url }}" style="height: 24px" class="rounded-circle mr-2">
+							<span class="text-secondary">{{ site.author }}</span>
+						</div>
+					</div>
+				{%  endfor %}
+			</div>
+			<div class="col-md-12">
+				<div class="row d-flex align-items-center">
+					<div class="col-12 col-md-4 my-2">
+						{% if paginator.previous_page %}
+						    <a href="{{ paginator.previous_page_path | prepend: site.baseurl | replace: '//', '/' }}" class="btn btn-outline-secondary btn-block">
+						    	<i class="fas fa-angle-left"></i>
+						    	Halaman Selanjutnya
+						    </a>
+					  {% endif %}
+					</div>
+
+					<div class="col-md-4 d-none d-md-block text-center">
+						<span class="text-secondary">Page {{ paginator.page }} of {{ paginator.total_pages }}</span>
+					</div>
+
+					<div class="col-12 col-md-4 my-2">
+						{% if paginator.next_page %}
+					  	<a href="{{ paginator.next_page_path | prepend: site.baseurl | replace: '//', '/' }}" class="btn btn-outline-secondary btn-block">
+					  		Halaman Sebelumnya
+								<i class="fas fa-angle-right"></i>
+						  </a>
+					  {% endif %} 
+					</div>
 				</div>
 			</div>
-		{%  endfor %}
+			</div>
+		</div>
 	</div>
 </div>
