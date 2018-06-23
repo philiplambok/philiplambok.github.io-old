@@ -1,8 +1,8 @@
 ---
 layout: collections
 ---
-
-{% for work in site.works %}
+<h2>My Open Sources Project</h2>
+{% for work in site.works reversed %}
 	<div class="mb-4 border-bottom pb-2">
 		<div class="d-block">
 			<span class="font-weight-bold">Title</span>
@@ -14,11 +14,15 @@ layout: collections
 			<span>:</span>
 			<span>{{ work.status }}</span>
 		</div>
-		<div class="d-block">
-			<span class="font-weight-bold">Homepage</span>
-			<span>:</span>
-			<a href="{{ work.link }}">{{ work.link }}</a>
-		</div>
+
+		{% if work.link %}
+			<div class="d-block">
+				<span class="font-weight-bold">Homepage</span>
+				<span>:</span>
+				<a href="{{ work.link }}">{{ work.link }}</a>
+			</div>
+		{% endif %}
+		
 		<span class="d-block my-4">{{ work.content }}</span>
 	</div>
 {% endfor  %}
