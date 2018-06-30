@@ -6,6 +6,4 @@ date: 30-06-2018
 image: mysql-uncover.jpg
 ---
 
-Seperti buku-buku dunia ilkom yang sebelumnya :)
-
-Buku ini cocok dibaca untuk pemula, namun isinya sangat padat sekali.
+Buku ini disajikan untuk pemula MySQL atau MariaDB, mengulas SQL dan beberapa fitur di MariaDB.
