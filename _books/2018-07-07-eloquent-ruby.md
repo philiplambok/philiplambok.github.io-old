@@ -1,6 +1,6 @@
 ---
 title: Eloquent Ruby
-author: Russ Oslen 
+author: Russ Olsen 
 rating: 7 / 10 
 date: 07-07-2018
 image: eloquent-ruby.jpg
