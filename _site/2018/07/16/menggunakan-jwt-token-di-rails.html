@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- bootstrap -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+<link rel="stylesheet" href="/assets/css/sintax.css">
+<link rel="stylesheet" href="/assets/css/style.css">
+
+<!-- font-awesome -->
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+
+<!-- google font -->
+<link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
+
+<!-- vue.js -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+
+	<title>Menggunakan JWT Token di Rails &middot; Philip Lambok's Slice of Life</title>
+</head>
+<body>
+	<div id="app">
+		<nav class="container-fluid bg-cute d-flex justify-content-between p-3 fixed-top">
+	<a href="#" class="text-white" @click.prevent="toogleNavbar">
+		<i class="fas fa-bars"></i>
+	</a>
+	<a href="/" class="no-link-style">
+		<span class="text-white font-weight-bold">Philip Lambok's Slice of Life</span>
+	</a>
+</nav>
+
+<div class="my-5"></div>
+
+
+		<div class="container-fluid">
+			<div class="row">
+				<div class="sidebar col-8 col-md-2 bg-light text-dark m-0 p-0" v-show="navbarActive">
+	<div class="p-5">
+		<img src="/assets/images/avatar.jpg" alt="avatar" class="img-fluid rounded-circle p-1">
+	</div>
+	
+	<ul>
+		<a href="/">
+			<li>Home</li>
+		</a>
+		<a href="/2017/06/19/about-me.html">
+			<li>About Me</li>
+		</a>
+		<a href="/resume.html">
+			<li>Resume</li>
+		</a>
+		<a href="/books.html">
+			<li>Books</li>
+		</a>
+		<a href="/works.html">
+			<li>Works</li>
+		</a>
+	</ul>
+</div>
+
+				<main :class="{ 'col-md-10 offset-md-2': navbarActive, 'col-md-12': !navbarActive }">
+					<header class="row d-flex align-items-end overlay" 
+						style="background-image: url('/assets/images/posts/ayano.jpg'); height: 300px;">
+						<div class="col-md-8 mx-auto text-white py-3 darken-with-text">
+							<h3>Menggunakan JWT Token di Rails</h3>
+							<div class="d-flex align-items-center">
+								<img src="/assets/images/avatar.jpg" style="height: 40px" class="rounded-circle">
+								<span class="mx-2">Philip Lambok</span> 
+									&middot; 
+								<span class="mx-2">16 Jul 2018</span>
+							</div>
+						</div>
+					</header>
+
+					<div class="row my-4">
+						<div class="col-md-8 m-auto markdown-body">
+							<div class="row">
+								<div class="col-md-12">
+									<p>Teknologi terus berkembang saat ini, mengembangkan projek perangkat lunak dengan API atau  memisahkan teknologi frontend dengan backend sudah menjadi hal yang lumrah. Tulisan ini akan mengulas cara otentikasinya jika anda melakukan hal tersebut.</p>
+
+<p>Tulisan ini khusus membahas bagaimana cara otentikasinya saja menggunakan JWT, namun pada akhir tulisan anda akan diberikan kode projek CRUD backend dengan rails.</p>
+
+<h2 id="pengantar-json-web-token">Pengantar JSON Web Token</h2>
+<p>JSON Web Token atau sering disingkat menjadi <a href="https://jwt.io/introduction/">JWT</a> adalah sebuah salah satu solusi atas permasalahan pada teknologi API. Dengan memisahkan backend dengan frontend memberikan keuntungan skalibilitas, dimana anda dapat dengan mudah mengembangkan aplikasi anda pada platfrom atau server lain, misalnya aplikasi android, ios, dekstop, maupun aplikasi web.</p>
+
+<p>Namun khususnya untuk otentikasi kita mendapat permasalahan, yaitu kita tidak bisa menyimpan session atau data yang sudah dienkripsi dari backend kita ke plafrom yang berbeda seperti android, ios maupun pada server atau vendor yang berbeda (konsumer API kita).</p>
+
+<p>Untuk masalah tersebut, kita bisa menggunakan JWT.</p>
+
+<h2 id="menggunakan-jwt-di-ruby">Menggunakan JWT di Ruby</h2>
+<p>Pada tulisan ini saya hanya menggunakan <code class="highlighter-rouge">'jwt'</code> saja, agar konsep bisa dicerna dengan baik.</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">gem</span> <span class="s1">'jwt'</span>
+</code></pre>
+</div>
+
+<p>Tambahkan kode diatas pada projek rails anda, dan jalankan <code class="highlighter-rouge">bundle</code>.</p>
+
+<p>JWT menggunakan dua fungsi utama, yaitu melakukan enkripsi dan dekripsi. Enkripsi, yaitu mengubah informasi menjadi karakter acak random, sedangkan dekripsi bertugas mengubah karakter yang random tadi menjadi informasi.</p>
+
+<h3 id="melakukan-ekripsi">Melakukan Ekripsi</h3>
+<p>Mengubah data atau informasi menjadi string acak.</p>
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'jwt'</span>
+
+<span class="n">payload</span> <span class="o">=</span> <span class="p">{</span> <span class="ss">data: </span><span class="s2">"ayano is best waifu"</span> <span class="p">}</span>
+
+<span class="n">token</span> <span class="o">=</span> <span class="no">JWT</span><span class="p">.</span><span class="nf">encode</span> <span class="n">payload</span><span class="p">,</span> <span class="kp">nil</span><span class="p">,</span> <span class="s1">'none'</span> <span class="c1">#&gt; "eyJhbGciOiJub25lIn0.eyJkYXRhIjoicmVtIn0."</span>
+</code></pre>
+</div>
+
+<p>Token pada jwt didapat dari hasil perpaduan <code class="highlighter-rouge">algoritma.data.kode_rahasia</code>, jika anda ingin belajar lanjut tentang teori atau cara kerja dari JWT anda bisa lihat <a href="https://jwt.io/introduction/">disini</a>.</p>
+
+<h3 id="melakukan-deskripsi">Melakukan Deskripsi</h3>
+<p>Mengubah string acak menjadi sebuah infromasi.</p>
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="no">JWT</span><span class="p">.</span><span class="nf">decode</span> <span class="n">token</span><span class="p">,</span> <span class="kp">false</span><span class="p">,</span> <span class="kp">nil</span> <span class="c1">#&gt; [{"data"=&gt;"rem"}, {"alg"=&gt;"none"}]</span>
+</code></pre>
+</div>
+
+<p>Decode akan menghasilkan array dari data dan algoritma yang dipakai.</p>
+
+<h2 id="mengunakan-jwt-di-rails">Mengunakan JWT di Rails</h2>
+<p>Sekarang kita mencoba untuk mengimplementasikannya di sebuah projek.</p>
+
+<p>Buat rails projek baru. Karena kita hanya menggunakan API tidak ada views, maka saya merekomendasikan untuk membuat projeknya dengan perintah :</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code>rails new ayano --api  
+</code></pre>
+</div>
+
+<p>Kita hanya membuat projek untuk otentikasi saja, anda boleh menamainya apa saja :)</p>
+
+<p>Sekarang buat model <code class="highlighter-rouge">user</code> dan controller <code class="highlighter-rouge">auth</code>, <code class="highlighter-rouge">home</code></p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code>rails g model User username password_digest 
+rails g controller auth
+rails g controller home   
+</code></pre>
+</div>
+
+<p>Kita akan menggunakan enkripsi <code class="highlighter-rouge">bcrypt</code> di sisi database, jadi tambahkan kode ini pada gemfile.</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">gem</span> <span class="s1">'bcrypt'</span> 
+</code></pre>
+</div>
+
+<p>Lalu jalankan <code class="highlighter-rouge">bundle</code>.</p>
+
+<p>Sekarang tambahkan user secara manual, baik lewat seeder atau rails c.</p>
+
+<p>Setelah data user disimpan, sekarang kita membuat fitur login atau sign in pada controler auth.</p>
+
+<p>Untuk routesnya kira-kira seperti ini:</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="no">Rails</span><span class="p">.</span><span class="nf">application</span><span class="p">.</span><span class="nf">routes</span><span class="p">.</span><span class="nf">draw</span> <span class="k">do</span> 
+  <span class="n">namespace</span> <span class="ss">:api</span> <span class="k">do</span> 
+    <span class="n">resources</span> <span class="ss">:auth</span><span class="p">,</span> <span class="ss">only: </span><span class="p">[</span><span class="ss">:create</span><span class="p">]</span>
+    <span class="n">resoruces</span> <span class="ss">:home</span><span class="p">,</span> <span class="ss">only: </span><span class="p">[</span><span class="ss">:show</span><span class="p">]</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>Untuk auth controllernya :</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Api</span><span class="o">::</span><span class="no">AuthController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+  <span class="n">before_action</span> <span class="ss">:set_user</span><span class="p">,</span> <span class="ss">only: </span><span class="p">[</span><span class="ss">:create</span><span class="p">]</span>
+  <span class="n">before_action</span> <span class="ss">:validate_authenticity_user</span><span class="p">,</span> <span class="ss">only: </span><span class="p">[</span><span class="ss">:create</span><span class="p">]</span> 
+  <span class="n">before_action</span> <span class="ss">:set_token</span><span class="p">,</span> <span class="ss">only: </span><span class="p">[</span><span class="ss">:create</span><span class="p">]</span>
+  
+  <span class="k">def</span> <span class="nf">create</span>
+    <span class="n">json_response</span><span class="p">({</span> <span class="ss">jwt: </span><span class="vi">@token</span> <span class="p">})</span>
+  <span class="k">end</span>
+
+  <span class="kp">private</span> 
+  <span class="k">def</span> <span class="nf">set_user</span> 
+    <span class="vi">@user</span> <span class="o">=</span> <span class="no">User</span><span class="p">.</span><span class="nf">find_by_username</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="ss">:auth</span><span class="p">][</span><span class="ss">:username</span><span class="p">])</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">validate_authenticity_user</span>
+    <span class="n">non_authenticated_message</span> <span class="k">unless</span> <span class="vi">@user</span> <span class="o">&amp;&amp;</span> <span class="vi">@user</span><span class="p">.</span><span class="nf">authenticate</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="ss">:auth</span><span class="p">][</span><span class="ss">:password</span><span class="p">])</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">non_authenticated_message</span> 
+    <span class="n">error_response</span> <span class="ss">code: </span><span class="mi">401</span><span class="p">,</span> <span class="ss">message: </span><span class="s2">"username or password is wrong"</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">set_token</span>
+    <span class="vi">@token</span> <span class="o">=</span> <span class="n">generate_token</span><span class="p">(</span><span class="vi">@user</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>Kode di atas menggunakan AuthHelper untuk melakukan enkripsi dan dekripsi. Oh iya, pada projek api-only saat membuat controller anda tidak disediakan helper, maka untuk membuat helpernya secara manual <code class="highlighter-rouge">rails g helper auth</code>.</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">module</span> <span class="nn">AuthHelper</span>
+  <span class="k">def</span> <span class="nf">generate_token</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span> <span class="ss">user_id: </span><span class="n">user</span><span class="p">.</span><span class="nf">id</span> <span class="p">}</span>
+    <span class="no">JWT</span><span class="p">.</span><span class="nf">encode</span> <span class="n">payload</span><span class="p">,</span> <span class="kp">nil</span><span class="p">,</span> <span class="s1">'none'</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">decode_token</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+    <span class="no">JWT</span><span class="p">.</span><span class="nf">decode</span> <span class="n">token</span><span class="p">,</span> <span class="kp">nil</span><span class="p">,</span> <span class="kp">false</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">authenticated?</span>
+    <span class="k">return</span> <span class="kp">false</span> <span class="k">unless</span> <span class="n">validate_headers</span>
+    <span class="k">return</span> <span class="kp">false</span> <span class="k">unless</span> <span class="n">validate_token</span>
+
+    <span class="c1"># returns true is pass validation </span>
+    <span class="kp">true</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">validate_headers</span> 
+    <span class="n">auth_headers</span> <span class="o">=</span> <span class="n">request</span><span class="p">.</span><span class="nf">authorization</span>
+
+    <span class="c1"># headers must be not empty</span>
+    <span class="k">return</span> <span class="kp">false</span> <span class="k">unless</span> <span class="n">auth_headers</span>
+
+    <span class="c1"># split headers to arrays </span>
+    <span class="n">auth_headers</span> <span class="o">=</span> <span class="n">auth_headers</span><span class="p">.</span><span class="nf">split</span>
+
+    <span class="c1"># headers must have 2 items </span>
+    <span class="k">return</span> <span class="kp">false</span> <span class="k">unless</span> <span class="n">auth_headers</span><span class="p">.</span><span class="nf">count</span> <span class="o">==</span> <span class="mi">2</span> 
+
+    <span class="c1"># headers[0] must be return string "Bearer"</span>
+    <span class="k">return</span> <span class="kp">false</span> <span class="k">unless</span> <span class="n">auth_headers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"Bearer"</span>
+    
+    <span class="c1"># returns true if pass validations </span>
+
+    <span class="kp">true</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">validate_token</span>
+    <span class="c1"># check avaiability user_id </span>
+    <span class="k">return</span> <span class="kp">false</span> <span class="k">unless</span> <span class="n">user_id</span>
+
+    <span class="c1"># returns true if pass validations </span>
+    <span class="kp">true</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">token</span>
+    <span class="n">request</span><span class="p">.</span><span class="nf">authorization</span><span class="p">.</span><span class="nf">split</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">user_id</span>
+    <span class="k">begin</span>
+      <span class="n">decode_token</span><span class="p">(</span><span class="n">token</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"user_id"</span><span class="p">]</span>
+    <span class="k">rescue</span>
+      <span class="kp">nil</span> 
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">current_user</span>
+    <span class="n">current_user</span> <span class="o">||=</span> <span class="no">User</span><span class="p">.</span><span class="nf">find_by_id</span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>Sebenarnya pada fitur login, kita hanya akan menggunakan method <code class="highlighter-rouge">generate_token</code>, namun jika di projek anda ingin menampilkan <code class="highlighter-rouge">current_user</code> yang sedang login, atau method untuk melakukan validasi, anda bisa menggunakan kode-kode di atas.</p>
+
+<p>Untuk testing aplikasi anda bisa menggunkan <em>postman</em>. Silahkan request method POST di url <code class="highlighter-rouge">auth</code> dengan body :</p>
+<div class="language-json highlighter-rouge"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"auth"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"username"</span><span class="p">:</span><span class="w"> </span><span class="s2">"pquest"</span><span class="p">,</span><span class="w"> 
+    </span><span class="nt">"password"</span><span class="p">:</span><span class="w"> </span><span class="s2">"secretcode"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+</div>
+<p>Maka anda akan diberikan hasil respon :</p>
+<div class="language-json highlighter-rouge"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"jwt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"your_token_here"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+</div>
+
+<p>Maka, anda sudah berhasil login ke dalam sistem. Sekarang untuk request selanjutnya anda harus meng-<em>include</em> token di atas pada header anda. Token diatas anda bisa simpan menggunkan javascript (<code class="highlighter-rouge">document.cokkie</code> atau <code class="highlighter-rouge">window.localStorage</code>).</p>
+
+<p>Format headernya <a href="https://jwt.io/introduction/">Ref</a> :</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>Authorization: Bearer &lt;your_token_token&gt;
+</code></pre>
+</div>
+
+<p>Jika anda sudah menyimpan token pada header anda, maka sekarang lakukan request kepada home untuk mengecek status otentikasi.</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Api</span><span class="o">::</span><span class="no">BlogsController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+  <span class="n">before_action</span> <span class="ss">:must_signed_in</span><span class="p">,</span> <span class="ss">only: </span><span class="p">[</span><span class="ss">:index</span><span class="p">]</span>
+
+  <span class="c1"># listing blogs </span>
+  <span class="k">def</span> <span class="nf">index</span> 
+    <span class="n">json_response</span><span class="p">(</span><span class="n">current_user</span><span class="p">)</span> 
+  <span class="k">end</span>
+
+  <span class="kp">private</span>
+  <span class="k">def</span> <span class="nf">must_signed_in</span>
+    <span class="n">non_authenticated_message</span> <span class="k">unless</span> <span class="n">authenticated?</span> 
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">non_authenticated_message</span> 
+    <span class="n">error_response</span> <span class="ss">code: </span><span class="mi">401</span><span class="p">,</span> <span class="ss">message: </span><span class="s2">"Sorry, you must signed in."</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>Maka, jika anda respon sekarang, jika token benar, sistem akan menampilkan respon objek <code class="highlighter-rouge">user</code> yang sedang login sekarang.</p>
+
+<p>fungsi <code class="highlighter-rouge">json_response</code> dan <code class="highlighter-rouge">error_response</code> didapat kode di dalam <code class="highlighter-rouge">application_controller</code> seperti di bawah ini :</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code>  <span class="k">def</span> <span class="nf">json_response</span><span class="p">(</span><span class="n">object</span><span class="p">)</span> 
+    <span class="n">render</span> <span class="ss">json: </span><span class="n">object</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">error_response</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
+    <span class="n">error</span> <span class="o">=</span> <span class="p">{</span> <span class="ss">code: </span><span class="n">options</span><span class="p">[</span><span class="ss">:code</span><span class="p">],</span> <span class="ss">message: </span><span class="n">options</span><span class="p">[</span><span class="ss">:message</span><span class="p">]</span> <span class="p">}</span>
+
+    <span class="n">render</span> <span class="ss">json: </span><span class="n">error</span> 
+  <span class="k">end</span>
+</code></pre>
+</div>
+
+<p>Kode diatas juga mengembalikan respon jika kode token tidak sesuai format atau bahkan salah.</p>
+
+<hr />
+<p>Anda sudah membaca tulisan singkat ini tentang penegimplementasian jwt token pada rails. 
+Jika anda tertarik dengan implementasian CRUD lengkap berserta otorisasinya (<em>role</em>), saya telah membuat contoh projeknya <a href="https://github.com/philiplambok/ayano">disini</a>.</p>
+
+<p>Projek diatas adalah projek untuk sharing links. User dapat menyimpan koleksi link, mengeditnya, menghapusnya dan melihat koleksi dari user lain. Pada projek ditas juga sudah dilengkapi dengan konsep <em>authorization</em>, yaitu adanya admin dan user tidak boleh sembarang edit dan menghapus link dari user lain.</p>
+
+<p>Untuk menggunakannya anda bisa lihat file <a href="https://github.com/philiplambok/ayano/blob/master/README.md">README.md</a>, disitu sudah saya tulis fitur-fiturnya dan endpoints apinya hingga <em>error handling</em>-nya.</p>
+
+<p>Tulisan ini masih banyak kekurangan, namun semoga dapat bermamfaat bagi pembaca skalian.</p>
+
+<p>Terima kasih.</p>
+
+
+								</div>
+								<div class="col-md-12">
+									<div id="disqus_thread"></div>
+<script>
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://philip-onii.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+								</div>
+							</div>
+						</div>
+					</div>
+				</main>
+			</div>
+		</div>
+	</div>
+	
+	<footer class="container-fluid text-center py-5 mt-5">
+	<div class="col-md-3 m-auto">
+		<span class="d-block my-2 text-secondary">Philip Lambok's Slice of Life &copy; 2018</span>
+		<div class="d-flex justify-content-around">
+			<a href="/2017/06/19/about-me.html">about me</a>
+			<a href="/resume.html">resume</a>
+			<a href="/books.html">books</a>
+			<a href="/works.html">works</a>
+		</div>
+	</div>
+</footer>
+
+<script src="/assets/js/script.js"></script>
+</body>
+</html>
