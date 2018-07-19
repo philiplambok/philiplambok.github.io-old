@@ -3,7 +3,7 @@ title: Test-Driven Development
 author: Kent Beck 
 rating: 7 / 10 
 date: 19-07-2018
-image: tdd-kentbeck.png
+image: tdd-kentbeck.jpg
 ---
 
 Kent beck adalah pioner dari metodologi testing driven developemnt. 
