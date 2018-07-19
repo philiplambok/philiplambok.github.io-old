@@ -6,6 +6,6 @@ date: 19-07-2018
 image: tdd-kentbeck.jpg
 ---
 
-Kent beck adalah pioner dari metodologi testing driven developemnt. 
+Kent beck adalah pioner dari metodologi testing driven development. 
 
 Jadi membaca bukunya pasti memberikan keutungan tersendiri. Pada buku ini, kent beck menjelaskan tdd dengan mencontohkan sebuah studi kasus dengan membuat sebuah program. Pada bukunya juga membuat pola desain dan tips dan trik dalam menggunakan tdd. 
