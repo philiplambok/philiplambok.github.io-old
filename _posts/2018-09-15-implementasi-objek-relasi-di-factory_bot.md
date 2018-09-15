@@ -119,14 +119,14 @@ Maka penulisan `factories/user.rb`-nya kita bisa buat menjadi seperti ini.
 ```ruby
 FactoryBot.define do
   factory :member_user, class: User do 
-    first_name { "John" }
-    last_name { "Laylor" }
+    first_name { "Rem" }
+    last_name { "Chan" }
     association :role, factory: :member_role
   end
 
   factory :admin_user, class: User do 
-    first_name { "Super" }
-    last_name { "Admin" }
+    first_name { "Emilia" }
+    last_name { "Chan" }
     association :role, factory: :admin_role
   end
 end
