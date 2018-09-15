@@ -138,14 +138,14 @@ Contoh penulisan kode test yang buruk (yang saya lakukan dulu :p)
 ```ruby
 FactoryBot.define do
   factory :member_user, class: User do 
-    first_name { "John" }
-    last_name { "Laylor" }
+    first_name { "Rem" }
+    last_name { "Chan" }
     role_id 2
   end
 
   factory :admin_user, class: User do 
-    first_name { "Super" }
-    last_name { "Admin" }
+    first_name { "Emilia" }
+    last_name { "Chan" }
     role_id 1
   end
 end
