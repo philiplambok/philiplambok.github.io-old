@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- bootstrap -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+<link rel="stylesheet" href="/assets/css/sintax.css">
+<link rel="stylesheet" href="/assets/css/style.css">
+
+<!-- font-awesome -->
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+
+<!-- google font -->
+<link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
+
+<!-- vue.js -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+
+	<title>Implementasi Objek Relasi di factory_bot &middot; Philip Lambok's Slice of Life</title>
+</head>
+<body>
+	<div id="app">
+		<nav class="container-fluid bg-cute d-flex justify-content-between p-3 fixed-top">
+	<a href="#" class="text-white" @click.prevent="toogleNavbar">
+		<i class="fas fa-bars"></i>
+	</a>
+	<a href="/" class="no-link-style">
+		<span class="text-white font-weight-bold">Philip Lambok's Slice of Life</span>
+	</a>
+</nav>
+
+<div class="my-5"></div>
+
+
+		<div class="container-fluid">
+			<div class="row">
+				<div class="sidebar col-8 col-md-2 bg-light text-dark m-0 p-0" v-show="navbarActive">
+	<div class="p-5">
+		<img src="/assets/images/avatar.jpg" alt="avatar" class="img-fluid rounded-circle p-1">
+	</div>
+	
+	<ul>
+		<a href="/">
+			<li>Home</li>
+		</a>
+		<a href="/2017/06/19/about-me.html">
+			<li>About Me</li>
+		</a>
+		<a href="/resume.html">
+			<li>Resume</li>
+		</a>
+		<a href="/books.html">
+			<li>Books</li>
+		</a>
+		<a href="/works.html">
+			<li>Works</li>
+		</a>
+	</ul>
+</div>
+
+				<main :class="{ 'col-md-10 offset-md-2': navbarActive, 'col-md-12': !navbarActive }">
+					<header class="row d-flex align-items-end overlay" 
+						style="background-image: url('/assets/images/posts/ayano.jpg'); height: 300px;">
+						<div class="col-md-8 mx-auto text-white py-3 darken-with-text">
+							<h3>Implementasi Objek Relasi di factory_bot</h3>
+							<div class="d-flex align-items-center">
+								<img src="/assets/images/avatar.jpg" style="height: 40px" class="rounded-circle">
+								<span class="mx-2">Philip Lambok</span> 
+									&middot; 
+								<span class="mx-2">15 Sep 2018</span>
+							</div>
+						</div>
+					</header>
+
+					<div class="row my-4">
+						<div class="col-md-8 m-auto markdown-body">
+							<div class="row">
+								<div class="col-md-12">
+									<p>Pada tulisan ini saya mencoba untuk berbagi hasil oprek tentang penulisan kode uji yang bekerja pada objek yang berelasi. Tulisan ini akan membahas sambil membuat sebuah contoh projek sederhana. Pada tulisan ini juga saya mencoba mencontohkan penulisan kode uji yang tidak baik khususnya pada bekerja dengan relasi objek yang mungkin anda gunakan.</p>
+
+<p>Ketika anda membuat sebuah projek dengan menggunakan lebih dari satu table dan terdapat kunci tamu pada table tertentu maka anda akan berkerja dengan objek yang berelasi. Contohnya adalah ketika anda ingin membuat sebuah fitur <em>role</em> pada user. Dimana fitur tersebut dapat membedakan user yang sebagai member dan user yang sebagai admin. Untuk implementasi fitur tersebut, maka anda membuat dua buah table yaitu role dan user. Anda bisa saja membuat satu table dengan menambahkan <em>field</em> admin, namun saya tidak menyarankan hal tersebut karena nilai skalabilitasnya cukup rendah.</p>
+
+<p>Sekarang, Mari kita masuk ke contoh projeknya.</p>
+
+<h2 id="langkah-pertama-adalah-membuat-rails-projek">Langkah pertama adalah membuat rails projek</h2>
+<p>Jalankan perintah ini untuk membuat proyeknya.</p>
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$&gt; </span>rails new factory_bot_test  
+</code></pre>
+</div>
+
+<p>Setelah perintah selesai diproses, maka selanjutnya menambahkan <em>gem</em> <code class="highlighter-rouge">rspec-rails</code> dan <code class="highlighter-rouge">factory_bot_rails</code>.</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">group</span> <span class="ss">:development</span><span class="p">,</span> <span class="ss">:test</span> <span class="k">do</span>
+  <span class="c1"># Call 'byebug' anywhere in the code to stop execution and get a debugger console</span>
+  <span class="n">gem</span> <span class="s1">'byebug'</span><span class="p">,</span> <span class="ss">platforms: </span><span class="p">[</span><span class="ss">:mri</span><span class="p">,</span> <span class="ss">:mingw</span><span class="p">,</span> <span class="ss">:x64_mingw</span><span class="p">]</span>
+  <span class="n">gem</span> <span class="s1">'rspec-rails'</span>
+  <span class="n">gem</span> <span class="s1">'factory_bot_rails'</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>Setelah itu jalankan perintah ini secara berurutan</p>
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$&gt; </span>bundle
+<span class="gp">$&gt; </span>rails g rspec:install 
+</code></pre>
+</div>
+
+<h2 id="mendesain-struktur-data">Mendesain struktur data</h2>
+<p>Struktur data yang akan digunakan pada proyek sederhana ini adalah:</p>
+
+<p>Role: (id, name)</p>
+
+<p>User: (id, first_name, last_name, role_id)</p>
+
+<h2 id="membuat-objek-model-role">Membuat objek model <code class="highlighter-rouge">Role</code></h2>
+<p>Sebelum menjalankan generator pembuatan model, ada baiknya kita melakukan menambahkan kode pada <em>config</em> agar factories-nya bisa digunakan pada pengujiannya. Pada file <code class="highlighter-rouge">rails_helper.rb</code> tambahkan kode ini.</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="no">RSpec</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="c1"># include factory_bot</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">include</span> <span class="no">FactoryBot</span><span class="o">::</span><span class="no">Syntax</span><span class="o">::</span><span class="no">Methods</span>
+  <span class="c1"># ...</span>
+</code></pre>
+</div>
+
+<p>Setelah itu baru kita membuat generate modelnya, pada hal ini nanti otomatis rails membuat file factorinya untuk kita.</p>
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$&gt; </span>rails g model role name 
+</code></pre>
+</div>
+
+<p>Pada file <code class="highlighter-rouge">factories/role.rb</code> kita menulis kode ini:</p>
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="no">FactoryBot</span><span class="p">.</span><span class="nf">define</span> <span class="k">do</span>
+  <span class="n">factory</span> <span class="ss">:role</span> <span class="k">do</span> 
+    <span class="nb">name</span> <span class="p">{</span> <span class="s2">"costum"</span> <span class="p">}</span>
+  <span class="k">end</span>
+
+  <span class="n">factory</span> <span class="ss">:admin_role</span><span class="p">,</span> <span class="ss">class: </span><span class="no">Role</span> <span class="k">do</span> 
+    <span class="nb">id</span> <span class="p">{</span> <span class="mi">1</span> <span class="p">}</span>
+    <span class="nb">name</span> <span class="p">{</span> <span class="s2">"admin"</span> <span class="p">}</span>
+  <span class="k">end</span>
+  
+  <span class="n">factory</span> <span class="ss">:member_role</span><span class="p">,</span> <span class="ss">class: </span><span class="no">Role</span> <span class="k">do</span> 
+    <span class="nb">id</span> <span class="p">{</span> <span class="mi">2</span> <span class="p">}</span>
+    <span class="nb">name</span> <span class="p">{</span> <span class="s2">"member"</span> <span class="p">}</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>Sedangkan untuk pengujiannya anda bisa menulis kode seperti ini:</p>
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'rails_helper'</span>
+
+<span class="no">RSpec</span><span class="p">.</span><span class="nf">describe</span> <span class="no">Role</span><span class="p">,</span> <span class="ss">type: :model</span> <span class="k">do</span>
+  <span class="n">it</span> <span class="s2">"valid with name"</span> <span class="k">do</span> 
+    <span class="n">role</span> <span class="o">=</span> <span class="n">build</span><span class="p">(</span><span class="ss">:role</span><span class="p">,</span> <span class="ss">name: </span><span class="s2">"member"</span><span class="p">)</span>
+    <span class="n">role</span><span class="p">.</span><span class="nf">valid?</span> 
+    <span class="n">expect</span><span class="p">(</span><span class="n">role</span><span class="p">.</span><span class="nf">errors</span><span class="p">).</span><span class="nf">to</span> <span class="n">be_empty</span>
+  <span class="k">end</span>
+
+  <span class="n">it</span> <span class="s2">"is invalid without name"</span> <span class="k">do</span> 
+    <span class="n">role</span> <span class="o">=</span> <span class="n">build</span><span class="p">(</span><span class="ss">:role</span><span class="p">,</span> <span class="ss">name: </span><span class="kp">nil</span><span class="p">)</span>
+    <span class="n">role</span><span class="p">.</span><span class="nf">valid?</span> 
+    <span class="n">expect</span><span class="p">(</span><span class="n">role</span><span class="p">.</span><span class="nf">errors</span><span class="p">[</span><span class="ss">:name</span><span class="p">]).</span><span class="nf">to</span> <span class="kp">include</span><span class="p">(</span><span class="s2">"can't be blank"</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="n">it</span> <span class="s2">"return's member name"</span> <span class="k">do</span> 
+    <span class="n">role</span> <span class="o">=</span> <span class="n">build</span><span class="p">(</span><span class="ss">:member_role</span><span class="p">)</span>
+    <span class="n">expect</span><span class="p">(</span><span class="n">role</span><span class="p">.</span><span class="nf">name</span><span class="p">).</span><span class="nf">to</span> <span class="n">eq</span><span class="p">(</span><span class="s2">"member"</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="n">it</span> <span class="s2">"return's admin name"</span> <span class="k">do</span> 
+    <span class="n">role</span> <span class="o">=</span> <span class="n">build</span><span class="p">(</span><span class="ss">:admin_role</span><span class="p">)</span> 
+    <span class="n">expect</span><span class="p">(</span><span class="n">role</span><span class="p">.</span><span class="nf">name</span><span class="p">).</span><span class="nf">to</span> <span class="n">eq</span><span class="p">(</span><span class="s2">"admin"</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<h2 id="membuat-objek-user">Membuat objek <code class="highlighter-rouge">User</code></h2>
+<p>Setelah objek <code class="highlighter-rouge">Role</code> telah dibuat, sekarang saatnya membuat objek <code class="highlighter-rouge">User</code>.</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$&gt; </span>rails g model User name role:references 
+</code></pre>
+</div>
+
+<p>Maka penulisan <code class="highlighter-rouge">factories/user.rb</code>-nya kita bisa buat menjadi seperti ini.</p>
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="no">FactoryBot</span><span class="p">.</span><span class="nf">define</span> <span class="k">do</span>
+  <span class="n">factory</span> <span class="ss">:member_user</span><span class="p">,</span> <span class="ss">class: </span><span class="no">User</span> <span class="k">do</span> 
+    <span class="n">first_name</span> <span class="p">{</span> <span class="s2">"John"</span> <span class="p">}</span>
+    <span class="n">last_name</span> <span class="p">{</span> <span class="s2">"Laylor"</span> <span class="p">}</span>
+    <span class="n">association</span> <span class="ss">:role</span><span class="p">,</span> <span class="ss">factory: :member_role</span>
+  <span class="k">end</span>
+
+  <span class="n">factory</span> <span class="ss">:admin_user</span><span class="p">,</span> <span class="ss">class: </span><span class="no">User</span> <span class="k">do</span> 
+    <span class="n">first_name</span> <span class="p">{</span> <span class="s2">"Super"</span> <span class="p">}</span>
+    <span class="n">last_name</span> <span class="p">{</span> <span class="s2">"Admin"</span> <span class="p">}</span>
+    <span class="n">association</span> <span class="ss">:role</span><span class="p">,</span> <span class="ss">factory: :admin_role</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>Anda tidak perlu membuat data seeder pada kode test anda yang akan membuat testnya menjadi kebergantungan. Apalagi pada <code class="highlighter-rouge">rails</code>, seeder pada test adalah seeder yang anda gunakan pada development yang membuat banyak data-data yang tidak digunakan pada database test anda.</p>
+
+<p>Contoh penulisan kode test yang buruk (yang saya lakukan dulu :p)</p>
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="no">FactoryBot</span><span class="p">.</span><span class="nf">define</span> <span class="k">do</span>
+  <span class="n">factory</span> <span class="ss">:member_user</span><span class="p">,</span> <span class="ss">class: </span><span class="no">User</span> <span class="k">do</span> 
+    <span class="n">first_name</span> <span class="p">{</span> <span class="s2">"John"</span> <span class="p">}</span>
+    <span class="n">last_name</span> <span class="p">{</span> <span class="s2">"Laylor"</span> <span class="p">}</span>
+    <span class="n">role_id</span> <span class="mi">2</span>
+  <span class="k">end</span>
+
+  <span class="n">factory</span> <span class="ss">:admin_user</span><span class="p">,</span> <span class="ss">class: </span><span class="no">User</span> <span class="k">do</span> 
+    <span class="n">first_name</span> <span class="p">{</span> <span class="s2">"Super"</span> <span class="p">}</span>
+    <span class="n">last_name</span> <span class="p">{</span> <span class="s2">"Admin"</span> <span class="p">}</span>
+    <span class="n">role_id</span> <span class="mi">1</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>Kode diatas ini adalah contoh kode yang kurang baik. Kode uji yang baik adalah kode yang bisa berdiri secara mandiri.</p>
+
+<p>Sekarang anda bisa mencoba menulis kode test pada model usernya.</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'rails_helper'</span>
+
+<span class="no">RSpec</span><span class="p">.</span><span class="nf">describe</span> <span class="no">User</span><span class="p">,</span> <span class="ss">type: :model</span> <span class="k">do</span>
+  <span class="n">let</span> <span class="p">(</span><span class="ss">:member_user</span><span class="p">)</span> <span class="p">{</span> <span class="n">build</span><span class="p">(</span><span class="ss">:member_user</span><span class="p">)</span> <span class="p">}</span>
+  <span class="n">let</span> <span class="p">(</span><span class="ss">:admin_user</span><span class="p">)</span> <span class="p">{</span> <span class="n">build</span><span class="p">(</span><span class="ss">:admin_user</span><span class="p">)</span> <span class="p">}</span>
+
+  <span class="n">it</span> <span class="s2">"valid with first_name, last_name and role"</span> <span class="k">do</span>
+    <span class="n">member_user</span><span class="p">.</span><span class="nf">valid?</span> 
+    <span class="n">expect</span><span class="p">(</span><span class="n">member_user</span><span class="p">.</span><span class="nf">errors</span><span class="p">).</span><span class="nf">to</span> <span class="n">be_empty</span>
+  <span class="k">end</span>
+
+  <span class="n">it</span> <span class="s2">"invalid without first_name"</span> <span class="k">do</span>
+    <span class="n">member_user</span><span class="p">.</span><span class="nf">first_name</span> <span class="o">=</span> <span class="kp">nil</span> 
+    <span class="n">member_user</span><span class="p">.</span><span class="nf">valid?</span> 
+    <span class="n">expect</span><span class="p">(</span><span class="n">member_user</span><span class="p">.</span><span class="nf">errors</span><span class="p">[</span><span class="ss">:first_name</span><span class="p">]).</span><span class="nf">to</span> <span class="kp">include</span><span class="p">(</span><span class="s2">"can't be blank"</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="n">it</span> <span class="s2">"valid without last_name"</span> <span class="k">do</span> 
+    <span class="n">member_user</span><span class="p">.</span><span class="nf">last_name</span> <span class="o">=</span> <span class="kp">nil</span>
+    <span class="n">member_user</span><span class="p">.</span><span class="nf">valid?</span> 
+    <span class="n">expect</span><span class="p">(</span><span class="n">member_user</span><span class="p">.</span><span class="nf">errors</span><span class="p">[</span><span class="ss">:last_name</span><span class="p">]).</span><span class="nf">to</span> <span class="n">be_empty</span>
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">"#name"</span> <span class="k">do</span> 
+    <span class="n">context</span> <span class="s2">"with first_name and last_name"</span> <span class="k">do</span>
+      <span class="n">it</span> <span class="s2">"return first_name and last_name"</span> <span class="k">do</span> 
+        <span class="n">expect</span><span class="p">(</span><span class="n">member_user</span><span class="p">.</span><span class="nf">name</span><span class="p">).</span><span class="nf">to</span> <span class="kp">include</span><span class="p">(</span><span class="s2">"</span><span class="si">#{</span><span class="n">member_user</span><span class="p">.</span><span class="nf">first_name</span><span class="si">}</span><span class="s2"> </span><span class="si">#{</span><span class="n">member_user</span><span class="p">.</span><span class="nf">last_name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+      <span class="k">end</span> 
+    <span class="k">end</span>
+
+    <span class="n">context</span> <span class="s2">"with first_name and without last_name"</span> <span class="k">do</span> 
+      <span class="n">it</span> <span class="s2">"return first_name"</span> <span class="k">do</span>
+        <span class="n">member_user</span><span class="p">.</span><span class="nf">last_name</span> <span class="o">=</span> <span class="kp">nil</span>
+        <span class="n">expect</span><span class="p">(</span><span class="n">member_user</span><span class="p">.</span><span class="nf">name</span><span class="p">).</span><span class="nf">to</span> <span class="n">eq</span><span class="p">(</span><span class="n">member_user</span><span class="p">.</span><span class="nf">first_name</span><span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">"#role"</span> <span class="k">do</span>
+    <span class="n">context</span> <span class="s2">"admin role"</span> <span class="k">do</span> 
+      <span class="n">it</span> <span class="s2">"id = 1"</span> <span class="k">do</span> 
+        <span class="n">expect</span><span class="p">(</span><span class="n">admin_user</span><span class="p">.</span><span class="nf">role</span><span class="p">.</span><span class="nf">id</span><span class="p">).</span><span class="nf">to</span> <span class="n">eq</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">"name = 'admin'"</span> <span class="k">do</span> 
+        <span class="n">expect</span><span class="p">(</span><span class="n">admin_user</span><span class="p">.</span><span class="nf">role</span><span class="p">.</span><span class="nf">name</span><span class="p">).</span><span class="nf">to</span> <span class="n">eq</span><span class="p">(</span><span class="s2">"admin"</span><span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span> 
+
+    <span class="n">context</span> <span class="s2">"member role"</span> <span class="k">do</span> 
+      <span class="n">it</span> <span class="s2">"id = 2"</span> <span class="k">do</span>
+        <span class="n">expect</span><span class="p">(</span><span class="n">member_user</span><span class="p">.</span><span class="nf">role</span><span class="p">.</span><span class="nf">id</span><span class="p">).</span><span class="nf">to</span> <span class="n">eq</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">"name = 'member"</span> <span class="k">do</span> 
+        <span class="n">expect</span><span class="p">(</span><span class="n">member_user</span><span class="p">.</span><span class="nf">role</span><span class="p">.</span><span class="nf">name</span><span class="p">).</span><span class="nf">to</span> <span class="n">eq</span><span class="p">(</span><span class="s2">"member"</span><span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<hr />
+<p>Cukup sekian tulisan kali ini, semoga dapat membantu pembaca sekalian.</p>
+
+
+								</div>
+								<div class="col-md-12">
+									<div id="disqus_thread"></div>
+<script>
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://philip-onii.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+								</div>
+							</div>
+						</div>
+					</div>
+				</main>
+			</div>
+		</div>
+	</div>
+	
+	<footer class="container-fluid text-center py-5 mt-5">
+	<div class="col-md-3 m-auto">
+		<span class="d-block my-2 text-secondary">Philip Lambok's Slice of Life &copy; 2018</span>
+		<div class="d-flex justify-content-around">
+			<a href="/2017/06/19/about-me.html">about me</a>
+			<a href="/assets/pdf/Philip_Lambok_resume_2018.pdf">resume</a>
+			<a href="/books.html">books</a>
+			<a href="/works.html">works</a>
+		</div>
+	</div>
+</footer>
+
+<script src="/assets/js/script.js"></script>
+</body>
+</html>
