@@ -12,7 +12,7 @@ Ketika anda membuat sebuah projek dengan menggunakan lebih dari satu table dan t
   
 Sekarang, Mari kita masuk ke contoh projeknya. 
 
-## Langkah pertama adalah membuat rails projek 
+## Membuat projek rails 
 Jalankan perintah ini untuk membuat proyeknya. 
 ```bash 
 $> rails new factory_bot_test  
