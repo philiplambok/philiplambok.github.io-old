@@ -2,7 +2,7 @@
 layout: post
 title: Implementasi Objek Relasi di factory_bot
 date: 15-09-2018
-image: ayano.jpg
+image: nyarons.jpg
 tags: [factory_bot, tdd, ruby, rails]
 ---
 
