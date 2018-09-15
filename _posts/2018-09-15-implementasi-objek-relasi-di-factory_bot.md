@@ -197,23 +197,13 @@ RSpec.describe User, type: :model do
 
   describe "#role" do
     context "admin role" do 
-      it "id = 1" do 
-        expect(admin_user.role.id).to eq(1)
-      end
-
-      it "name = 'admin'" do 
-        expect(admin_user.role.name).to eq("admin")
-      end
+      specify { expect(admin_user.role.id).to eq(1) }
+      specify { expect(admin_user.role.name).to eq("admin") }
     end 
 
     context "member role" do 
-      it "id = 2" do
-        expect(member_user.role.id).to eq(2)
-      end
-
-      it "name = 'member" do 
-        expect(member_user.role.name).to eq("member")
-      end
+      specify { expect(member_user.role.id).to eq(2) }
+      specify { expect(member_user.role.name).to eq("member") }
     end
   end
 end

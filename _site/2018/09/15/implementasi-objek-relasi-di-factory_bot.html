@@ -266,23 +266,13 @@ User
 
   <span class="n">describe</span> <span class="s2">"#role"</span> <span class="k">do</span>
     <span class="n">context</span> <span class="s2">"admin role"</span> <span class="k">do</span> 
-      <span class="n">it</span> <span class="s2">"id = 1"</span> <span class="k">do</span> 
-        <span class="n">expect</span><span class="p">(</span><span class="n">admin_user</span><span class="p">.</span><span class="nf">role</span><span class="p">.</span><span class="nf">id</span><span class="p">).</span><span class="nf">to</span> <span class="n">eq</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-      <span class="k">end</span>
-
-      <span class="n">it</span> <span class="s2">"name = 'admin'"</span> <span class="k">do</span> 
-        <span class="n">expect</span><span class="p">(</span><span class="n">admin_user</span><span class="p">.</span><span class="nf">role</span><span class="p">.</span><span class="nf">name</span><span class="p">).</span><span class="nf">to</span> <span class="n">eq</span><span class="p">(</span><span class="s2">"admin"</span><span class="p">)</span>
-      <span class="k">end</span>
+      <span class="n">specify</span> <span class="p">{</span> <span class="n">expect</span><span class="p">(</span><span class="n">admin_user</span><span class="p">.</span><span class="nf">role</span><span class="p">.</span><span class="nf">id</span><span class="p">).</span><span class="nf">to</span> <span class="n">eq</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">}</span>
+      <span class="n">specify</span> <span class="p">{</span> <span class="n">expect</span><span class="p">(</span><span class="n">admin_user</span><span class="p">.</span><span class="nf">role</span><span class="p">.</span><span class="nf">name</span><span class="p">).</span><span class="nf">to</span> <span class="n">eq</span><span class="p">(</span><span class="s2">"admin"</span><span class="p">)</span> <span class="p">}</span>
     <span class="k">end</span> 
 
     <span class="n">context</span> <span class="s2">"member role"</span> <span class="k">do</span> 
-      <span class="n">it</span> <span class="s2">"id = 2"</span> <span class="k">do</span>
-        <span class="n">expect</span><span class="p">(</span><span class="n">member_user</span><span class="p">.</span><span class="nf">role</span><span class="p">.</span><span class="nf">id</span><span class="p">).</span><span class="nf">to</span> <span class="n">eq</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-      <span class="k">end</span>
-
-      <span class="n">it</span> <span class="s2">"name = 'member"</span> <span class="k">do</span> 
-        <span class="n">expect</span><span class="p">(</span><span class="n">member_user</span><span class="p">.</span><span class="nf">role</span><span class="p">.</span><span class="nf">name</span><span class="p">).</span><span class="nf">to</span> <span class="n">eq</span><span class="p">(</span><span class="s2">"member"</span><span class="p">)</span>
-      <span class="k">end</span>
+      <span class="n">specify</span> <span class="p">{</span> <span class="n">expect</span><span class="p">(</span><span class="n">member_user</span><span class="p">.</span><span class="nf">role</span><span class="p">.</span><span class="nf">id</span><span class="p">).</span><span class="nf">to</span> <span class="n">eq</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="p">}</span>
+      <span class="n">specify</span> <span class="p">{</span> <span class="n">expect</span><span class="p">(</span><span class="n">member_user</span><span class="p">.</span><span class="nf">role</span><span class="p">.</span><span class="nf">name</span><span class="p">).</span><span class="nf">to</span> <span class="n">eq</span><span class="p">(</span><span class="s2">"member"</span><span class="p">)</span> <span class="p">}</span>
     <span class="k">end</span>
   <span class="k">end</span>
 <span class="k">end</span>
