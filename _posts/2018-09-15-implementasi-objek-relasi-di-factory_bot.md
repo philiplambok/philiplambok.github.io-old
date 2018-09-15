@@ -37,11 +37,13 @@ $> rails g rspec:install
 
 ## Mendesain struktur data
 Struktur data yang akan digunakan pada proyek sederhana ini adalah: 
+```
+Role
+  -> id, name
 
-Role: (id, name)
-
-User: (id, first_name, last_name, role_id)
-
+User 
+  -> id, first_name, last_name, role_id
+```
 
 ## Membuat objek model `Role`
 Sebelum menjalankan generator pembuatan model, ada baiknya kita melakukan menambahkan kode pada *config* agar factories-nya bisa digunakan pada pengujiannya. Pada file `rails_helper.rb` tambahkan kode ini.

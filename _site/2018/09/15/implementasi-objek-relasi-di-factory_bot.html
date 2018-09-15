@@ -61,7 +61,7 @@
 
 				<main :class="{ 'col-md-10 offset-md-2': navbarActive, 'col-md-12': !navbarActive }">
 					<header class="row d-flex align-items-end overlay" 
-						style="background-image: url('/assets/images/posts/ayano.jpg'); height: 300px;">
+						style="background-image: url('/assets/images/posts/nyarons.jpg'); height: 300px;">
 						<div class="col-md-8 mx-auto text-white py-3 darken-with-text">
 							<h3>Implementasi Objek Relasi di factory_bot</h3>
 							<div class="d-flex align-items-center">
@@ -83,7 +83,7 @@
 
 <p>Sekarang, Mari kita masuk ke contoh projeknya.</p>
 
-<h2 id="langkah-pertama-adalah-membuat-rails-projek">Langkah pertama adalah membuat rails projek</h2>
+<h2 id="membuat-projek-rails">Membuat projek rails</h2>
 <p>Jalankan perintah ini untuk membuat proyeknya.</p>
 <div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$&gt; </span>rails new factory_bot_test  
 </code></pre>
@@ -108,10 +108,13 @@
 
 <h2 id="mendesain-struktur-data">Mendesain struktur data</h2>
 <p>Struktur data yang akan digunakan pada proyek sederhana ini adalah:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>Role
+  -&gt; id, name
 
-<p>Role: (id, name)</p>
-
-<p>User: (id, first_name, last_name, role_id)</p>
+User 
+  -&gt; id, first_name, last_name, role_id
+</code></pre>
+</div>
 
 <h2 id="membuat-objek-model-role">Membuat objek model <code class="highlighter-rouge">Role</code></h2>
 <p>Sebelum menjalankan generator pembuatan model, ada baiknya kita melakukan menambahkan kode pada <em>config</em> agar factories-nya bisa digunakan pada pengujiannya. Pada file <code class="highlighter-rouge">rails_helper.rb</code> tambahkan kode ini.</p>
