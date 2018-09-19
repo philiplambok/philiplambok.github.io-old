@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- bootstrap -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+<link rel="stylesheet" href="/assets/css/sintax.css">
+<link rel="stylesheet" href="/assets/css/style.css">
+
+<!-- font-awesome -->
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+
+<!-- google font -->
+<link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
+
+<!-- vue.js -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+
+	<title>Authenticator, sebuah service object pada Rails untuk menangani otentikasi dengan JWT. &middot; Philip Lambok's Slice of Life</title>
+</head>
+<body>
+	<div id="app">
+		<nav class="container-fluid bg-cute d-flex justify-content-between p-3 fixed-top">
+	<a href="#" class="text-white" @click.prevent="toogleNavbar">
+		<i class="fas fa-bars"></i>
+	</a>
+	<a href="/" class="no-link-style">
+		<span class="text-white font-weight-bold">Philip Lambok's Slice of Life</span>
+	</a>
+</nav>
+
+<div class="my-5"></div>
+
+
+		<div class="container-fluid">
+			<div class="row">
+				<div class="sidebar col-8 col-md-2 bg-light text-dark m-0 p-0" v-show="navbarActive">
+	<div class="p-5">
+		<img src="/assets/images/avatar.jpg" alt="avatar" class="img-fluid rounded-circle p-1">
+	</div>
+	
+	<ul>
+		<a href="/">
+			<li>Home</li>
+		</a>
+		<a href="/2017/06/19/about-me.html">
+			<li>About Me</li>
+		</a>
+		<a href="/assets/pdf/Philip_Lambok_resume_2018.pdf">
+			<li>Resume</li>
+		</a>
+		<a href="/books.html">
+			<li>Books</li>
+		</a>
+		<a href="/works.html">
+			<li>Works</li>
+		</a>
+	</ul>
+</div>
+
+				<main :class="{ 'col-md-10 offset-md-2': navbarActive, 'col-md-12': !navbarActive }">
+					<header class="row d-flex align-items-end overlay" 
+						style="background-image: url('/assets/images/posts/ayano-smile.jpg'); height: 300px;">
+						<div class="col-md-8 mx-auto text-white py-3 darken-with-text">
+							<h3>Authenticator, sebuah service object pada Rails untuk menangani otentikasi dengan JWT.</h3>
+							<div class="d-flex align-items-center">
+								<img src="/assets/images/avatar.jpg" style="height: 40px" class="rounded-circle">
+								<span class="mx-2">Philip Lambok</span> 
+									&middot; 
+								<span class="mx-2">19 Sep 2018</span>
+							</div>
+						</div>
+					</header>
+
+					<div class="row my-4">
+						<div class="col-md-8 m-auto markdown-body">
+							<div class="row">
+								<div class="col-md-12">
+									<p>Kali ini saya ingin berbagi tentang bagaimana menangani otentikasi dengan JWT menggunakan service objek. Service objeknya sendiri saya namakan Authenticator, objek ini di desain oleh saya secara sederhana hanya untuk menggambarkan bagaimana konsep service objek ini diimplementasikan.</p>
+
+<p>Jika anda belum mengetahui JWT itu apa, mungkin anda bisa membaca <a href="https://philiplambok.github.io/2018/07/16/menggunakan-jwt-token-di-rails.html">tulisan sebelumnya</a>.</p>
+
+<h2 id="membuat-proyek-baru">Membuat proyek baru</h2>
+<p>Buatlah proyek rails-api baru. <code class="highlighter-rouge">rails new jwt_auth --api</code>.</p>
+
+<p>Setelah itu lakukan <code class="highlighter-rouge">bundle</code>.</p>
+
+<p>Lalu buka <code class="highlighter-rouge">Gemfile</code> dan tambahkan <code class="highlighter-rouge">gem 'jwt'</code> dan hapus komentar pada <code class="highlighter-rouge">gem bcrypt</code> pada file tersebut dan jalankan <code class="highlighter-rouge">bundle</code> kembali.</p>
+
+<h2 id="membuat-model-dan-controller">Membuat model dan controller</h2>
+<p>Karena kita ingin membuat fitur otentikasi, maka kita akan membuat model user dan auth_controller.</p>
+
+<p>Buat model user dengan perintah <code class="highlighter-rouge">rails g model user username password_digest</code> dan tambahkan <em>callback</em> <code class="highlighter-rouge">has_secure_password</code> pada model User.</p>
+
+<p>Lalu buat controller dengan perintah <code class="highlighter-rouge">rails g controller auth</code> dan register <code class="highlighter-rouge">routes.rb</code>.</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="no">Rails</span><span class="p">.</span><span class="nf">application</span><span class="p">.</span><span class="nf">routes</span><span class="p">.</span><span class="nf">draw</span> <span class="k">do</span>
+  <span class="n">post</span> <span class="s1">'auth'</span><span class="p">,</span> <span class="ss">to: </span><span class="s1">'auth#create'</span>
+  <span class="n">get</span> <span class="s1">'auth'</span><span class="p">,</span> <span class="ss">to: </span><span class="s1">'auth#show'</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">post 'auth'</code> untuk membuat tokennya, sedangkan pada <code class="highlighter-rouge">get 'auth</code> untuk <em>decode</em> atau menampilkan objeknya. Untuk penampilan objek usernya tulisan tidak menggunakan <code class="highlighter-rouge">serializer</code> agar lebih sederhana, namun jika pembaca akan menggunakannya pada produksi, saya sangat menyarankan untuk menggunakan <code class="highlighter-rouge">serializer</code>.</p>
+
+<p>Sekarang mari kita buat controllernya seperti kode dibawah ini</p>
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">AuthController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+  <span class="k">def</span> <span class="nf">show</span> 
+    <span class="n">render</span> <span class="ss">json: </span><span class="p">{</span> <span class="ss">user: </span><span class="no">Authenticator</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">token_params</span><span class="p">).</span><span class="nf">user</span> <span class="p">}</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">create</span> 
+    <span class="n">render</span> <span class="ss">json: </span><span class="p">{</span> <span class="ss">jwt: </span><span class="no">Authenticator</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">auth_params</span><span class="p">).</span><span class="nf">token</span> <span class="p">}</span>
+  <span class="k">end</span>
+
+  <span class="kp">private</span>
+  <span class="k">def</span> <span class="nf">auth_params</span>
+    <span class="n">params</span><span class="p">.</span><span class="nf">require</span><span class="p">(</span><span class="ss">:auth</span><span class="p">).</span><span class="nf">permit</span><span class="p">(</span><span class="ss">:username</span><span class="p">,</span> <span class="ss">:password</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">token_params</span>
+    <span class="p">{</span> <span class="ss">auth_header: </span><span class="n">request</span><span class="p">.</span><span class="nf">authorization</span> <span class="p">}</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<h2 id="membuat-service-object-authenticator">Membuat <em>service object</em> Authenticator</h2>
+
+<p>Objek ini digunakan untuk mengatasi masalah-masalah yang terkait otentikasi, kodenya sebagai berikut:</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Authenticator</span>
+  <span class="kp">attr_accessor</span> <span class="ss">:token</span><span class="p">,</span> <span class="ss">:user</span>
+  
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">options</span><span class="p">[</span><span class="ss">:auth_header</span><span class="p">]</span>
+      <span class="n">set_user</span><span class="p">(</span><span class="n">options</span><span class="p">[</span><span class="ss">:auth_header</span><span class="p">])</span>
+    <span class="k">else</span> 
+      <span class="n">set_token</span><span class="p">(</span><span class="n">options</span><span class="p">[</span><span class="ss">:username</span><span class="p">],</span><span class="n">options</span><span class="p">[</span><span class="ss">:password</span><span class="p">])</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="kp">private</span> 
+  <span class="k">def</span> <span class="nf">set_token</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
+    <span class="vi">@user</span> <span class="o">=</span> <span class="no">User</span><span class="p">.</span><span class="nf">find_by</span><span class="p">(</span><span class="ss">username: </span><span class="n">username</span><span class="p">)</span>
+    <span class="k">if</span> <span class="vi">@user</span> <span class="o">&amp;&amp;</span> <span class="vi">@user</span><span class="p">.</span><span class="nf">authenticate</span><span class="p">(</span><span class="n">password</span><span class="p">)</span>
+      <span class="vi">@token</span> <span class="o">=</span> <span class="n">generate_token</span><span class="p">(</span><span class="ss">username: </span><span class="vi">@user</span><span class="p">.</span><span class="nf">username</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">set_user</span><span class="p">(</span><span class="n">auth_header</span><span class="p">)</span>
+    <span class="vi">@token</span> <span class="o">=</span> <span class="n">filter_auth_header</span><span class="p">(</span><span class="n">auth_header</span><span class="p">)</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">decode_token</span><span class="p">(</span><span class="vi">@token</span><span class="p">)</span> <span class="k">if</span> <span class="vi">@token</span>
+    <span class="k">if</span> <span class="n">payload</span>
+      <span class="vi">@user</span> <span class="o">=</span> <span class="no">User</span><span class="p">.</span><span class="nf">find_by</span><span class="p">(</span><span class="ss">username: </span><span class="n">payload</span><span class="p">[</span><span class="s2">"username"</span><span class="p">])</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+  
+  <span class="k">def</span> <span class="nf">generate_token</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span> 
+    <span class="no">JWT</span><span class="p">.</span><span class="nf">encode</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="kp">nil</span><span class="p">,</span> <span class="s1">'none'</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">decode_token</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+    <span class="k">begin</span>
+      <span class="n">decoded_token</span> <span class="o">=</span> <span class="no">JWT</span><span class="p">.</span><span class="nf">decode</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="kp">nil</span><span class="p">,</span> <span class="kp">false</span><span class="p">)</span>
+      <span class="n">decoded_token</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">rescue</span>
+      <span class="kp">nil</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">filter_auth_header</span><span class="p">(</span><span class="n">auth_header</span><span class="p">)</span> 
+    <span class="n">auth_header</span> <span class="o">=</span> <span class="n">auth_header</span><span class="p">.</span><span class="nf">split</span>
+    <span class="k">return</span> <span class="kp">false</span> <span class="k">if</span> <span class="n">auth_header</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">"Bearer"</span> 
+    <span class="n">auth_header</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>Jelas, proyek ini masih sangat bisa untuk dilakukan <em>refactor</em> agar lebih bersih dan lebih mudah dipahami, namun penulisan ini hanya berfokus pada contoh implementasiannya saja.</p>
+
+<h2 id="tambahan">Tambahan</h2>
+<p>Jika anda membuat proyek ini tanpa perintah <code class="highlighter-rouge">--api</code>, maka dapat dipastikan anda dapat menjalankan proyek tersebut dengan tidak ada hambatan, namun jika anda membuat proyek dengan perintah tersebut sama seperti yang saya lakukan yaitu menggunakan <code class="highlighter-rouge">--api</code> maka kemunkinan besar akan terjadi <em>error</em>.</p>
+
+<p><em>Error</em> tersebut ada karena pada <em>rails-api-only</em> projek tidak meng-<em>include</em> service objek secara otomatis, namun kita perlu melakukan secara manual dengan menambahkan baris kode berikut ini pada file <code class="highlighter-rouge">config/application.rb</code>.</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">config</span><span class="p">.</span><span class="nf">autoload_paths</span> <span class="o">+=</span> <span class="sx">%W(</span><span class="si">#{</span><span class="n">config</span><span class="p">.</span><span class="nf">root</span><span class="si">}</span><span class="sx">/app/services)</span>
+</code></pre>
+</div>
+
+<p>Perintah tersebut untuk menambahkan folder <code class="highlighter-rouge">app/services</code> pada <em>autoload</em> projek.</p>
+
+<hr />
+<p>Terima kasih telah membaca tulisan sederhana ini, semoga dapat berguna bagi pembaca skalian.</p>
+
+
+								</div>
+								<div class="col-md-12">
+									<div id="disqus_thread"></div>
+<script>
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://philip-onii.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+								</div>
+							</div>
+						</div>
+					</div>
+				</main>
+			</div>
+		</div>
+	</div>
+	
+	<footer class="container-fluid text-center py-5 mt-5">
+	<div class="col-md-3 m-auto">
+		<span class="d-block my-2 text-secondary">Philip Lambok's Slice of Life &copy; 2018</span>
+		<div class="d-flex justify-content-around">
+			<a href="/2017/06/19/about-me.html">about me</a>
+			<a href="/assets/pdf/Philip_Lambok_resume_2018.pdf">resume</a>
+			<a href="/books.html">books</a>
+			<a href="/works.html">works</a>
+		</div>
+	</div>
+</footer>
+
+<script src="/assets/js/script.js"></script>
+</body>
+</html>
