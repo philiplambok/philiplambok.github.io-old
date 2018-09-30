@@ -99,6 +99,6 @@ over and over again (3x)
 *Lagi dan lagi*  
 
 --- 
-I hope you can enjoy it and I'm sorry for the vocabularry or grammatical error.
+I hope you can enjoy it and I'm sorry if lyrics including some incorrect vocabulary or grammatical error.
 
 Thank You :)
