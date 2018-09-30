@@ -16,13 +16,13 @@ tags: [anime, lyrics, translation]
 (*Reff*)
 
 Rise up on your feet when you're falling    
-*bangkitkan kakimu ketika kamu terjatuh*  
+*Bangkitkan kakimu ketika kamu terjatuh*  
 over and over  
-*lagi dan lagi*  
+*Lagi dan lagi*  
 We rise up for the things we will leaving  
 *Kami bangkit dari hal-hal yang akan kami tinggalkan*     
 over and over again (3x)  
-*lagi dan lagi*
+*Lagi dan lagi*
 
 (*Verse 1*)
 
