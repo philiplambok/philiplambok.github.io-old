@@ -8,11 +8,11 @@ tags: [refactoring, exceptional, ruby, rails]
 
 Kode program akan lebih banyak kita lihat daripada kita tulis, maka daripada itu menulis kode yang mudah dimengerti dan memiliki struktur yang baik akan dapat meningkatkan kecepatan penambahan fitur dan dapat mengurangi potensi munculnya bug. 
 
-Pada tulisan ini saya mencoba mengenalkan penggunakan `exceptional` atau eksepsi pada pembuatan API di ruby on rails. Dimana penggunaan eksepsi ini dapat meningkatkan nilai `readable` yang mungkin sangat tinggi. 
+Pada tulisan ini saya mencoba mengenalkan penggunakan *exceptional* atau eksepsi pada pembuatan API di ruby on rails. Dimana penggunaan eksepsi ini dapat meningkatkan nilai *readable* yang mungkin sangat tinggi. 
 
 Pada sebelumnya, mari kita lihat cara tradisional bagaimana pada pembuatan enpoint tertentu pada API. 
 
-(Catatan: Sebenarnya cara ini bisa dilakukan bukan hanya pada program jenis API, namun untuk kesederhanaan penulisan, saya akan mencontohkannya dengan contoh pembuatan API) 
+> Catatan: Sebenarnya cara ini bisa dilakukan bukan hanya pada program jenis API, namun untuk kesederhanaan penulisan, saya akan mencontohkannya dengan contoh pembuatan API
 
 ```ruby
 class UsersController < ApplicationController 
@@ -50,7 +50,7 @@ end
 
 Kode diatas juga masih cukup mudah mengerti. Namun bagaimana jika permintaan fitur menambah? penambahan fitur pada sebuah software akan selalu ada dan itu adalah hal yang baik, karena itu menandakan bahwa software itu terus berkembang. 
 
-Maka ketika fitur bertambah artinya kode juga pasti bertambah, dengan mengimplemtasikan konsep SOLID, maka kita membuat kelas service baru, dan mungkin `controller` kita akan jadi seperti ini: 
+Maka ketika fitur bertambah artinya kode juga pasti bertambah, dengan mengimplemtasikan konsep *SOLID*, maka kita membuat kelas *service* baru, dan mungkin `Controller` kita akan jadi seperti ini: 
 
 ```ruby
 class UsersController < ApplicationController 
@@ -71,9 +71,9 @@ class UsersController < ApplicationController
 end
 ```
 
-Kode diatas sudah cukup kotor, dan bagaimana jika kita menambahkan satu lagi atau dua lagi kelas service, controller kita menjadi semakin sulit di kontrol, khususunya pada penanganan `errornya`.
+Kode diatas sudah cukup kotor, dan bagaimana jika kita menambahkan satu lagi atau dua lagi kelas service, controller kita menjadi semakin sulit di kontrol, khususunya pada penanganan *error*-nya.
 
-Solusi dari masalah tersebut kita bisa menggunakan fitur eksepsi. Fitur eksepsi bisa langsung menghentikan alur program ketika dia menemukan terjadinya error, sehingga kita tidak perlu mengecek kondisi `apakah terjadi error?`. Untuk contoh penggunaannya bisa seperti kode dibawah ini. 
+Solusi dari masalah tersebut kita bisa menggunakan fitur eksepsi. Fitur eksepsi bisa langsung menghentikan alur program ketika dia menemukan terjadinya error, sehingga kita tidak perlu mengecek kondisi *apakah terjadi error?*. Untuk contoh penggunaannya bisa seperti kode dibawah ini. 
 
 ```ruby
 class UsersController < ApplicationController
@@ -203,12 +203,13 @@ module UserService
 end
 ```
 
-Sangat kostumisasi sekali, bukan? namun kode tersebut masih cukup kotor, karena fungsi `add_messages(messages)` seharusnya bisa dibuat di dalam module `error` saja. Silahkan dicoba sendiri :)
+Sangat kostumisasi sekali, bukan? namun kode tersebut masih cukup kotor, karena fungsi `add_messages(messages)` seharusnya bisa dibuat di dalam module `Error` saja. Silahkan dicoba sendiri :)
 
 ### Catatan 
 Mungkin sebelum mengakhiri tulisan ini, saya ingin beberapa catatan jika anda ingin mengimplementasikan konsep strategi ini dalam aplikasi anda. 
 
 - Jangan menggunakan *nested* eksepsi, seperti kode dibawah ini. 
+
   ```ruby 
   begin
     # do something
@@ -220,6 +221,7 @@ Mungkin sebelum mengakhiri tulisan ini, saya ingin beberapa catatan jika anda in
     end
   end
   ``` 
+
   Kode seperti ini akan sangat sulit di perlihara, sebaiknya dihindari. 
 
 - Jangan menangkap eksepsi error secara global di Ruby, contohnya seperti ini: 
@@ -231,9 +233,10 @@ Mungkin sebelum mengakhiri tulisan ini, saya ingin beberapa catatan jika anda in
     puts "ada failure"
   end
   ```
-  Kode diatas akan menghasilkan keluaran "ada failure". Sungguh berbahaya sekali, karena itu yang kita tidak inginkan. Dengan kode seperti itu kita akan sulit menulis kode pada development atau melakukan *debuggging*-nya. 
+  Kode diatas akan menghasilkan keluaran "ada failure". Sungguh berbahaya sekali, karena itu yang kita tidak inginkan. Dengan kode seperti itu kita akan sulit menulis kode pada development atau melakukan *debugging*-nya. 
 
-  Namun bagaimana dengan kode kita sebelumnnya? Benar, sebelumnya kita tidak mengambil parameter apapun namun secara default ruby akan menangkap eksepsi `StandarError`.  
+  Namun bagaimana dengan kode kita sebelumnnya? Benar, sebelumnya kita tidak mengambil parameter apapun namun secara default ruby akan menangkap eksepsi `StandarError`. 
+  
   ```ruby
   # kode ini adalah sama 
   begin
@@ -250,6 +253,7 @@ Mungkin sebelum mengakhiri tulisan ini, saya ingin beberapa catatan jika anda in
   ```  
 
   Namun jika kita lihat [hirarki dari eksepsinya](https://ruby-doc.org/core-2.1.1/Exception.html), maka kode ini masih menghasilkan "ada failure"
+
   ```ruby
   # kode ini adalah sama 
   begin
@@ -296,7 +300,8 @@ Mungkin sebelum mengakhiri tulisan ini, saya ingin beberapa catatan jika anda in
 
   Dengan kode seperti itu anda akan menghindari penangapan eksepsi dari `nil.perform` atau `sum = 1 / 0`. 
 
-  - Ada satu lagi yang bisa kita refactor jika kita menggunakan konsep eksepsi. Kita sadar controller kita nyatanya belum terlalu `clean`, dengan mengikuti `sandi rules` satu method di controller hanya boleh hanya satu instansi saja. Sebelumnya `controller` kita seperti ini 
+  Ada satu lagi yang bisa kita refactor jika kita menggunakan konsep eksepsi. Kita sadar controller kita nyatanya belum terlalu *clean*, dengan mengikuti *sandi rules* satu method di controller hanya boleh hanya satu instansi saja. Sebelumnya `Controller` kita seperti ini 
+
   ```ruby
   # app/controller/user_controller.rb 
   class UsersController < ApplicationController
