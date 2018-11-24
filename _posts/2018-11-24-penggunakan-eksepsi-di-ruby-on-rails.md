@@ -1,4 +1,4 @@
-Penggunaan Exceptional di Ruby / Rails. 
+# Penggunaan Eksepsi di Ruby on Rails. 
 
 Kode program akan lebih banyak kita lihat daripada kita tulis, maka daripada itu menulis kode yang mudah dimengerti dan memiliki struktur yang baik akan dapat meningkatkan kecepatan penambahan fitur dan dapat mengurangi potensi munculnya bug. 
 
