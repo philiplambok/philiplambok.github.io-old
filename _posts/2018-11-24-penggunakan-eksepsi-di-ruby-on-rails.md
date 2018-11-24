@@ -1,4 +1,10 @@
-# Penggunaan Eksepsi di Ruby on Rails. 
+---
+layout: post
+title: Penggunaan Eksepsi di Ruby on Rails
+date: 24-11-2018
+image: try-catch.jpg
+tags: [refactoring, exceptional, ruby, rails]
+---
 
 Kode program akan lebih banyak kita lihat daripada kita tulis, maka daripada itu menulis kode yang mudah dimengerti dan memiliki struktur yang baik akan dapat meningkatkan kecepatan penambahan fitur dan dapat mengurangi potensi munculnya bug. 
 
